@@ -13,16 +13,20 @@ FetchContent_Declare(
         GIT_TAG        v3.5.2 # if you run into issues, try updating your editor or downgrading to a lower version of catch v3
 )
 FetchContent_MakeAvailable(Catch2)
-find_package(SFML 2 REQUIRED COMPONENTS graphics)
+find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
 
-file(GLOB_RECURSE SOURCES "src/*.cpp")
-add_executable(Main ${SOURCES})
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+add_subdirectory(src/game)
+add_subdirectory(src/ui)
+add_subdirectory(src/dsa)
         
+add_executable(Main src/main.cpp)
 add_executable(Tests test/test.cpp)
         
-target_include_directories(Main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain)
-target_link_libraries(Main PRIVATE sfml-graphics)
+target_link_libraries(Main PRIVATE game ui dsa sfml-graphics sfml-window
+    sfml-system)
 
 # comment everything below out if you are using CLion
 include(CTest)

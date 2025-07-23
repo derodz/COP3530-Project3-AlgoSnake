@@ -1,7 +1,5 @@
-#include <Graph.h>
+#include <dsa/Graph.h>
 #include <iostream>
-
-using namespace std;
 
 int main() {
 	Graph<int> testing(10, 10);
