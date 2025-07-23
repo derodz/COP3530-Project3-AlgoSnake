@@ -1,4 +1,5 @@
 #include <dsa/Graph.h>
+#include <ui/window.h>
 #include <iostream>
 
 int main() {
@@ -15,4 +16,6 @@ int main() {
 	for (const auto &pair : neighbors) {
 		std::cout << "(" << pair.first << ", " << pair.second << ")\n";
 	}
+
+	return test();
 }
