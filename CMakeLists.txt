@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
 project(AlgoSnake)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 14)
-
-set(GCC_COVERAGE_COMPILE_FLAGS "-Wall -Werror")
+set(GCC_COVERAGE_COMPILE_FLAGS "-Werror -Wuninitialized")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 
 Include(FetchContent)
@@ -15,16 +15,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 find_package(SFML 2 REQUIRED COMPONENTS graphics)
 
-include_directories(src)
-
-add_executable(Main
-        src/main.cpp
-        )
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+add_executable(Main ${SOURCES})
         
-add_executable(Tests
-        test/test.cpp
-        )
+add_executable(Tests test/test.cpp)
         
+target_include_directories(Main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain)
 target_link_libraries(Main PRIVATE sfml-graphics)
 
