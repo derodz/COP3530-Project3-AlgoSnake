@@ -8,11 +8,11 @@
 const std::pair<int, int> STEPS[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
 template <typename T> class Graph {
-  int rows = 0, cols = 0;
+  int rows, cols;
   std::vector<std::vector<T>> adjMatrix;
 
 public:
-  Graph();
+  Graph() : rows(0), cols(0), adjMatrix() {};
   Graph(int r, int c) : rows(r), cols(c), adjMatrix(r, std::vector<T>(c)) {};
 
   void setMatrixDims(int r, int c) {
@@ -44,15 +44,17 @@ public:
     return adjMatrix[y][x];
   }
 
-  std::vector<std::pair<int, int>> getNodeNeighbors(int y, int x) {
+  std::vector<std::pair<int, int>> getNeighborCoords(int y, int x) {
     std::vector<std::pair<int, int>> neighbors;
-		for (const auto &step : STEPS) {
-			int dy = step.first, dx = step.second;
-			int ny = y + dy, nx = x + dx;
-			if (ny >= 0 && nx >= 0 && ny < rows && nx < cols) {
-				neighbors.push_back({ny, nx});
-			}
-		}
-		return neighbors;
+    for (const auto &step : STEPS) {
+      int dy = step.first, dx = step.second;
+      int ny = y + dy, nx = x + dx;
+      if (ny >= 0 && nx >= 0 && ny < rows && nx < cols) {
+        neighbors.push_back({ny, nx});
+      }
+    }
+    return neighbors;
   }
+
+  std::vector<T> getNodeNeighbors(int y, int x);
 };
