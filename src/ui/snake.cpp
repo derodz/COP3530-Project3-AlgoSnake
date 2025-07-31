@@ -13,7 +13,7 @@ struct snakePart
 {
 private:
     sf::CircleShape segment;
-    //sf::RectangleShape segment(sf::Vector2f(25.f, 25.f));
+    // sf::RectangleShape segment(sf::Vector2f(25.f, 25.f));
 
 public:
     float xPos;
@@ -56,7 +56,7 @@ void moveSnake(queue<snakePart> &snake, string dirrection)
 {
     auto tempSnake = snake;
 
-    //move pers one to new position but save old position
+    // move pers one to new position but save old position
     auto tempPart = tempSnake.front();
     float lastX = tempPart.xPos;
     float lastY = tempPart.yPos;
@@ -85,14 +85,13 @@ void moveSnake(queue<snakePart> &snake, string dirrection)
         tempPart.setPos(newX, newY);
         snake.emplace(tempPart);
     }
-
 }
 
-void addPart(queue<snakePart>& snake, string dirrection)
+void addPart(queue<snakePart> &snake, string dirrection)
 {
     auto tempSnake = snake;
 
-    //move pers one to new position but save old position
+    // move pers one to new position but save old position
     auto tempPart = tempSnake.front();
     float lastX = tempPart.xPos;
     float lastY = tempPart.yPos;
@@ -127,7 +126,7 @@ void addPart(queue<snakePart>& snake, string dirrection)
     snake.emplace(a);
 }
 
-bool Died(queue<snakePart>& snake)
+bool Died(queue<snakePart> &snake)
 {
     auto tempSnake = snake;
     vector<snakePart> compare;
@@ -147,10 +146,10 @@ bool Died(queue<snakePart>& snake)
         tempSnake.pop();
     }
 
-    for(int i = 0; i < compare.size(); i++)
+    for (int i = 0; i < compare.size(); i++)
     {
         // check if it touches itself
-        for(int j = 0; j < compare.size(); j++)
+        for (int j = 0; j < compare.size(); j++)
         {
             if (i != j)
             {
@@ -162,7 +161,7 @@ bool Died(queue<snakePart>& snake)
     return false;
 }
 
-void eat(queue<snakePart>& snake, snakePart& food, int speed, string dirrection)
+void eat(queue<snakePart> &snake, snakePart &food, int speed, string dirrection)
 {
     // checks if food is eaten
     // changes food's location
@@ -217,10 +216,10 @@ void eat(queue<snakePart>& snake, snakePart& food, int speed, string dirrection)
         food.setPos(x, y);
         cout << "position set to: " << x << " " << y << endl;
     }
-    
 }
 
-int main() {
+int main()
+{
     cout << "Hello AlgoSnake!\n";
 
     /*vector<snakePart> snake;
@@ -249,14 +248,13 @@ int main() {
     string dirrection = "None";
     int speed = 0;
     bool isDead = false;
-    
 
     // starting user interface code inspired from an SFML project done in a previous class
-    //set window
-    sf::RenderWindow window(sf::VideoMode({ (500), (500) }), "AlgoSnake");
+    // set window
+    sf::RenderWindow window(sf::VideoMode({(500), (500)}), "AlgoSnake");
 
-    //create shape perappeters and buttons
-    // start button will start the ai snake
+    // create shape perappeters and buttons
+    //  start button will start the ai snake
     sf::RectangleShape btnStart(sf::Vector2f(25.f, 25.f));
     btnStart.setFillColor(sf::Color::Green);
     btnStart.setPosition(10, 420);
@@ -284,7 +282,7 @@ int main() {
     {
         isDead = Died(snake);
         eat(snake, food, speed, dirrection);
-        if (dirrection != "None" && speed >= 300  && !isDead)
+        if (dirrection != "None" && speed >= 300 && !isDead)
         {
             moveSnake(snake, dirrection);
             speed = 0;
