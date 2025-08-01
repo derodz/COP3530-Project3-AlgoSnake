@@ -56,7 +56,7 @@ public:
     }
 };
 
-void moveSnake(queue<snakePart>& snake, string dirrection)
+void moveSnake(queue<snakePart>& snake, string direction)
 {
     auto tempSnake = snake;
 
@@ -64,22 +64,22 @@ void moveSnake(queue<snakePart>& snake, string dirrection)
     auto tempPart = tempSnake.front();
     float lastX = tempPart.xPos;
     float lastY = tempPart.yPos;
-    if (dirrection == "right")
+    if (direction == "right")
     {
         tempPart.updateXpos(20);
         //cout << "Moving right" << endl;
     }
-    if (dirrection == "left")
+    if (direction == "left")
     {
         tempPart.updateXpos(-20);
         //cout << "Moving left" << endl;
     }
-    if (dirrection == "up")
+    if (direction == "up")
     {
         tempPart.updateYpos(-20);
         //cout << "Moving up" << endl;
     }
-    if (dirrection == "down")
+    if (direction == "down")
     {
         tempPart.updateYpos(+20);
         //cout << "Moving down" << endl;
@@ -104,7 +104,7 @@ void moveSnake(queue<snakePart>& snake, string dirrection)
 
 }
 
-void addPart(queue<snakePart>& snake, string dirrection)
+void addPart(queue<snakePart>& snake, string direction)
 {
     auto tempSnake = snake;
 
@@ -112,13 +112,13 @@ void addPart(queue<snakePart>& snake, string dirrection)
     auto tempPart = tempSnake.front();
     float lastX = tempPart.xPos;
     float lastY = tempPart.yPos;
-    if (dirrection == "right")
+    if (direction == "right")
         tempPart.updateXpos(20);
-    if (dirrection == "left")
+    if (direction == "left")
         tempPart.updateXpos(-20);
-    if (dirrection == "up")
+    if (direction == "up")
         tempPart.updateYpos(-20);
-    if (dirrection == "down")
+    if (direction == "down")
         tempPart.updateYpos(+20);
     tempSnake.pop();
     snake.pop();
@@ -178,7 +178,7 @@ bool Died(queue<snakePart>& snake)
     return false;
 }
 
-void eat(queue<snakePart>& snake, snakePart& food, int speed, string dirrection)
+void eat(queue<snakePart>& snake, snakePart& food, int speed, string direction)
 {
     // checks if food is eaten
     // changes food's location
@@ -186,7 +186,7 @@ void eat(queue<snakePart>& snake, snakePart& food, int speed, string dirrection)
     auto head = snake.front();
     if (head.getCircle().getGlobalBounds().intersects(food.getCircle().getGlobalBounds()))
     {
-        addPart(snake, dirrection);
+        addPart(snake, direction);
         float y = food.yPos;
         float x = food.xPos;
         if (speed % 2 == 0)
@@ -236,7 +236,7 @@ void eat(queue<snakePart>& snake, snakePart& food, int speed, string dirrection)
 
 }
 
-void eat(queue<snakePart>& snake, snakePart& food, vector<pair<int, int>> placeFood, string dirrection, int& foodNum)
+void eat(queue<snakePart>& snake, snakePart& food, vector<pair<int, int>> placeFood, string direction, int& foodNum)
 {
     // checks if food is eaten
     // changes food's location
@@ -244,7 +244,7 @@ void eat(queue<snakePart>& snake, snakePart& food, vector<pair<int, int>> placeF
     auto head = snake.front();
     if (head.getCircle().getGlobalBounds().intersects(food.getCircle().getGlobalBounds()))
     {
-        addPart(snake, dirrection);
+        addPart(snake, direction);
 
         // Get the current food cordinates
         // update corrdinates
@@ -262,7 +262,7 @@ void eat(queue<snakePart>& snake, snakePart& food, vector<pair<int, int>> placeF
 
 }
 
-void moveVector(queue<snakePart>& snake, vector<pair<int, int>> path, string& dirrection, int& index, snakePart& head)
+void moveVector(queue<snakePart>& snake, vector<pair<int, int>> path, string& direction, int& index, snakePart& head)
 {
     auto point = path[index];
     if (index != path.size())
@@ -276,14 +276,14 @@ void moveVector(queue<snakePart>& snake, vector<pair<int, int>> path, string& di
         if (point.first < head.xPos)
         {
             //cout << "**************************************************************************************** change to left" << endl;
-            if (dirrection != "right")
-                dirrection = "left";
+            if (direction != "right")
+                direction = "left";
         }
         else if (point.first > head.xPos)
         {
             //cout << "**************************************************************************************** change to right" << endl;
-            if (dirrection != "left")
-                dirrection = "right";
+            if (direction != "left")
+                direction = "right";
         }
     }
     if (point.second != head.yPos)
@@ -291,20 +291,20 @@ void moveVector(queue<snakePart>& snake, vector<pair<int, int>> path, string& di
         if (point.second < head.yPos)
         {
             //cout << "**************************************************************************************** change to up" << endl;
-            if (dirrection != "down")
-                dirrection = "up";
+            if (direction != "down")
+                direction = "up";
         }
         else if (point.second > head.yPos)
         {
             //cout << "**************************************************************************************** change to down" << endl;
-            if (dirrection != "up")
-                dirrection = "down";
+            if (direction != "up")
+                direction = "down";
         }
     }
-    moveSnake(snake, dirrection);
+    moveSnake(snake, direction);
 }
 
-void switchVector(queue<snakePart>& snake, vector<pair<int, int>> path, string& dirrection, int& index, snakePart& holder, snakePart& part)
+void switchVector(queue<snakePart>& snake, vector<pair<int, int>> path, string& direction, int& index, snakePart& holder, snakePart& part)
 {
     //auto tempSnake = snake;
     //auto part = snake.front();
@@ -321,7 +321,7 @@ void switchVector(queue<snakePart>& snake, vector<pair<int, int>> path, string& 
             if (part.getCircle().getGlobalBounds().intersects(holder.getCircle().getGlobalBounds()))
             {
                 index++;
-                moveVector(snake, path, dirrection, index);
+                moveVector(snake, path, direction, index);
             }
         }*/
         if (part.getCircle().getGlobalBounds().intersects(holder.getCircle().getGlobalBounds()))
@@ -331,7 +331,7 @@ void switchVector(queue<snakePart>& snake, vector<pair<int, int>> path, string& 
 
             // must nudge snake so the algorthim keeps working
             auto tempSnake = snake;
-            if (dirrection == "up" || dirrection == "down")
+            if (direction == "up" || direction == "down")
             {
                 float change = part.yPos - point.second;
                 while (!tempSnake.empty())
@@ -358,7 +358,7 @@ void switchVector(queue<snakePart>& snake, vector<pair<int, int>> path, string& 
 
             /*part.setPos(point.first, point.second);
             cout << "------------------head now: " << part.xPos << " " << part.yPos << " -------------------------------" << endl;*/
-            moveVector(snake, path, dirrection, index, part);
+            moveVector(snake, path, direction, index, part);
         }
     }
 }
@@ -390,7 +390,7 @@ int main() {
     c.setPos(250, 290);
     snake.emplace(c);
 
-    string dirrection = "None";
+    string direction = "None";
     int speed = 0;
     bool isDead = false;
 
@@ -436,15 +436,15 @@ int main() {
     while (window.isOpen())
     {
         isDead = Died(snake);
-        //eat(snake, food, speed, dirrection);
-        eat(snake, food, foodPlaces, dirrection, foodIndex);
-        if (dirrection != "None" && speed >= 300  && !isDead)
+        //eat(snake, food, speed, direction);
+        eat(snake, food, foodPlaces, direction, foodIndex);
+        if (direction != "None" && speed >= 300  && !isDead)
         {
-            moveVector(snake, snakePlaces, dirrection, snakeIndex, snake.front());
-            moveSnake(snake, dirrection);
+            moveVector(snake, snakePlaces, direction, snakeIndex, snake.front());
+            moveSnake(snake, direction);
             speed = 0;
         }
-        switchVector(snake, snakePlaces, dirrection, snakeIndex, holder, snake.front());
+        switchVector(snake, snakePlaces, direction, snakeIndex, holder, snake.front());
         speed++;
 
         sf::Event event;
@@ -477,7 +477,7 @@ int main() {
                     c.setPos(250, 290);
                     snake.emplace(c);
 
-                    string dirrection = "None";
+                    string direction = "None";
                     speed = 0;
                 }
             }
@@ -485,26 +485,26 @@ int main() {
             {
                 if (event.key.code == sf::Keyboard::Up)
                 {
-                    if(dirrection != "down")
-                        dirrection = "up";
+                    if(direction != "down")
+                        direction = "up";
                 }
                 else if (event.key.code == sf::Keyboard::Down)
                 {
-                    if(dirrection != "up")
-                        dirrection = "down";
+                    if(direction != "up")
+                        direction = "down";
                 }
                 else if (event.key.code == sf::Keyboard::Right)
                 {
-                    if(dirrection != "left")
-                        dirrection = "right";
+                    if(direction != "left")
+                        direction = "right";
                 }
                 else if (event.key.code == sf::Keyboard::Left)
                 {
-                    if(dirrection != "right")
-                        dirrection = "left";
+                    if(direction != "right")
+                        direction = "left";
                 }
                 else
-                    dirrection = "None";
+                    direction = "None";
             }
         }
 

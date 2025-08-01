@@ -11,7 +11,6 @@ using namespace std;
 struct SnakePart {
 private:
   sf::CircleShape segment;
-  // sf::RectangleShape segment(sf::Vector2f(25.f, 25.f));
 
 public:
   float xPos;
@@ -39,11 +38,11 @@ public:
 
 bool SnakeOnGrid(queue<SnakePart> &snake, int x, int y);
 
-void moveSnake(queue<SnakePart> &snake, string dirrection);
+void moveSnake(queue<SnakePart> &snake, string direction);
 
-void addPart(queue<SnakePart> &snake, string dirrection);
+void addPart(queue<SnakePart> &snake, string direction);
 
 bool Died(queue<SnakePart> &snake);
 
 void eat(queue<SnakePart> &snake, SnakePart &food, int speed,
-         string dirrection);
+         string direction);

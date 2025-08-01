@@ -30,7 +30,7 @@ int main() {
   c.setPos(250, 290);
   snake.emplace(c);
 
-  string dirrection = "None";
+  string direction = "None";
   int speed = 0;
   bool isDead = false;
 
@@ -65,9 +65,9 @@ int main() {
 
   while (window.isOpen()) {
     isDead = Died(snake);
-    eat(snake, food, speed, dirrection);
-    if (dirrection != "None" && speed >= 300 && !isDead) {
-      moveSnake(snake, dirrection);
+    eat(snake, food, speed, direction);
+    if (direction != "None" && speed >= 300 && !isDead) {
+      moveSnake(snake, direction);
       speed = 0;
     }
     speed++;
@@ -98,20 +98,20 @@ int main() {
           c.setPos(250, 290);
           snake.emplace(c);
 
-          string dirrection = "None";
+          string direction = "None";
           speed = 0;
         }
       } else if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Up)
-          dirrection = "up";
+          direction = "up";
         else if (event.key.code == sf::Keyboard::Down)
-          dirrection = "down";
+          direction = "down";
         else if (event.key.code == sf::Keyboard::Right)
-          dirrection = "right";
+          direction = "right";
         else if (event.key.code == sf::Keyboard::Left)
-          dirrection = "left";
+          direction = "left";
         else
-          dirrection = "None";
+          direction = "None";
       }
     }
 

@@ -15,20 +15,20 @@ bool SnakeOnGrid(queue<SnakePart> &snake, int x, int y) {
   return false;
 }
 
-void moveSnake(queue<SnakePart> &snake, string dirrection) {
+void moveSnake(queue<SnakePart> &snake, string direction) {
   auto tempSnake = snake;
 
   // move pers one to new position but save old position
   auto tempPart = tempSnake.front();
   float lastX = tempPart.xPos;
   float lastY = tempPart.yPos;
-  if (dirrection == "right")
+  if (direction == "right")
     tempPart.updateXpos(20);
-  if (dirrection == "left")
+  if (direction == "left")
     tempPart.updateXpos(-20);
-  if (dirrection == "up")
+  if (direction == "up")
     tempPart.updateYpos(-20);
-  if (dirrection == "down")
+  if (direction == "down")
     tempPart.updateYpos(+20);
   tempSnake.pop();
   snake.pop();
@@ -48,20 +48,20 @@ void moveSnake(queue<SnakePart> &snake, string dirrection) {
   }
 }
 
-void addPart(queue<SnakePart> &snake, string dirrection) {
+void addPart(queue<SnakePart> &snake, string direction) {
   auto tempSnake = snake;
 
   // move pers one to new position but save old position
   auto tempPart = tempSnake.front();
   float lastX = tempPart.xPos;
   float lastY = tempPart.yPos;
-  if (dirrection == "right")
+  if (direction == "right")
     tempPart.updateXpos(20);
-  if (dirrection == "left")
+  if (direction == "left")
     tempPart.updateXpos(-20);
-  if (dirrection == "up")
+  if (direction == "up")
     tempPart.updateYpos(-20);
-  if (dirrection == "down")
+  if (direction == "down")
     tempPart.updateYpos(+20);
   tempSnake.pop();
   snake.pop();
@@ -117,14 +117,14 @@ bool Died(queue<SnakePart> &snake) {
 }
 
 void eat(queue<SnakePart> &snake, SnakePart &food, int speed,
-         string dirrection) {
+         string direction) {
   // checks if food is eaten
   // changes food's location
   // adds body part
   auto head = snake.front();
   if (head.getCircle().getGlobalBounds().intersects(
           food.getCircle().getGlobalBounds())) {
-    addPart(snake, dirrection);
+    addPart(snake, direction);
     float y = food.yPos;
     float x = food.xPos;
     if (speed % 2 == 0) {
