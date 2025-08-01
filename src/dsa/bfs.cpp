@@ -1,23 +1,25 @@
-#include "Graph.h"
-#include "snake.cpp"
-#include <vector>
-#include <set>
+#include <Graph.h>
+#include <Snake.h>
 #include <queue>
+#include <set>
 #include <stack>
+#include <vector>
 using namespace std;
 
-/// @brief This function uses a modified  BFS to find the shortest path to the food in a grid represented by a Graph.
-/// Before adding a node to the path, it checks if the snake occupies the grid cell at the given coordinates.
-/// Once adding the node, it also adds it and its predecessor to the path stack.
-/// Finally, once the food is found, it converts the stack to a vector to return the path from the start to the food.
-/// If no food is found, the snake will eventually die by running into a wall or itself since the BFS will have
+/// @brief This function uses a modified  BFS to find the shortest path to the
+/// food in a grid represented by a Graph. Before adding a node to the path, it
+/// checks if the snake occupies the grid cell at the given coordinates. Once
+/// adding the node, it also adds it and its predecessor to the path stack.
+/// Finally, once the food is found, it converts the stack to a vector to return
+/// the path from the start to the food. If no food is found, the snake will
+/// eventually die by running into a wall or itself since the BFS will have
 /// traversed all possible paths.
 /// @param graph
 /// @param snake
 /// @param startX
 /// @param startY
 /// @return
-vector<pair<int, int>> GetShortestPath(Graph<bool> &graph, queue<snakePart> &snake, int startX, int startY)
+vector<pair<int, int>> GetShortestPath(Graph<bool> &graph, queue<SnakePart> &snake, int startX, int startY)
 {
     // Pair of pairs,
     // First pair: coordinates (x, y). The first on top of the stack is where the food was found, else the next step.
