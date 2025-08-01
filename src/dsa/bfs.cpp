@@ -19,51 +19,53 @@ using namespace std;
 /// @param startX
 /// @param startY
 /// @return
-vector<pair<int, int>> bfsGetPath(Graph<bool> &graph, queue<SnakePart> &snake,
-                                  int startX, int startY) {
-  // Pair of pairs,
-  // First pair: coordinates (x, y). The first on top of the stack is where the
-  // food was found, else the next step. Second pair: coordinates (x, y) of the
-  // predecessor in the path.
-  stack<pair<pair<int, int>, pair<int, int>>> path;
-  queue<pair<int, int>> q;
-  q.push({startY, startX});
-  path.push({{startY, startX}, {-1, -1}});
+vector<pair<int, int>> GetShortestPath(Graph<bool> &graph, queue<SnakePart> &snake, int startX, int startY)
+{
+    // Pair of pairs,
+    // First pair: coordinates (x, y). The first on top of the stack is where the food was found, else the next step.
+    // Second pair: coordinates (x, y) of the predecessor in the path.
+    stack<pair<pair<int, int>, pair<int, int>>> path;
+    queue<pair<int, int>> q;
+    q.push({startX, startY});
+    path.push({{startX, startY}, {-1, -1}});
 
-  while (!q.empty()) {
-    auto coordinates = q.front();
-    auto node = graph.getMatrixNode(coordinates.first, coordinates.second);
+    while (!q.empty())
+    {
+        auto coordinates = q.front();
+        auto node = graph.getMatrixNode(coordinates.first, coordinates.second);
 
-    if (node)
-      // food is at node
-      break;
+        if (node)
+            // food is at node
+            break;
 
-    auto neighbors = graph.getNodeNeighbors(startY, startX);
+        auto neighbors = graph.getNodeNeighbors(startY, startX);
 
-    q.pop();
+        q.pop();
 
-    for (const auto &neighbor : neighbors) {
-      int ny = neighbor.first, nx = neighbor.second;
+        for (const auto &neighbor : neighbors)
+        {
+            int ny = neighbor.first, nx = neighbor.second;
 
-      if (!SnakeOnGrid(snake, nx, ny)) {
-        q.push({ny, nx});
-        path.push({{ny, nx}, coordinates});
-      }
+            if (!SnakeOnGrid(snake, nx, ny))
+            {
+                q.push({nx, ny});
+                path.push({{nx, ny}, coordinates});
+            }
+        }
     }
-  }
 
-  // Convert the stack path to a vector so the snake can follow it from
-  // beginning to end.
-  vector<pair<int, int>> finalPath;
-  while (!path.empty()) {
-    auto current = path.top();
-    path.pop();
+    // Convert the stack path to a vector so the snake can follow it from beginning to end.
+    vector<pair<int, int>> finalPath;
+    while (!path.empty())
+    {
+        auto current = path.top();
+        path.pop();
 
-    // If the predecessor is -1, it means we reached the start of the path.
-    if (current.second.first == -1 && current.second.second == -1)
-      break;
+        // If the predecessor is -1, it means we reached the start of the path.
+        if (current.second.first == -1 && current.second.second == -1)
+            break;
 
-    finalPath.push_back(current.first);
-  }
-  return finalPath;
+        finalPath.push_back(current.first);
+    }
+    return finalPath;
 }

@@ -4,28 +4,29 @@ project(AlgoSnake)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 14)
 set(GCC_COVERAGE_COMPILE_FLAGS "-Werror -Wuninitialized")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 
 Include(FetchContent)
 FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG        v3.5.2 # if you run into issues, try updating your editor or downgrading to a lower version of catch v3
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.5.2 # if you run into issues, try updating your editor or downgrading to a lower version of catch v3
 )
 FetchContent_MakeAvailable(Catch2)
+# include_directories(${CMAKE_SOURCE_DIR}/include)
+SET(SFML_DIR "C:\\SFML-2.6.2-x64\\lib\\cmake\\SFML")
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
-
-include_directories(${CMAKE_SOURCE_DIR}/include)
-
+# include_directories(${SFML_INCLUDE_DIRS}) 
 add_subdirectory(src/game)
 add_subdirectory(src/ui)
 add_subdirectory(src/dsa)
-        
+
 add_executable(Main src/main.cpp)
 add_executable(Tests test/test.cpp)
-        
+
+target_include_directories(Main PUBLIC ${SFML_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain)
-target_link_libraries(Main PRIVATE game ui dsa sfml-graphics sfml-window
+target_link_libraries(Main PUBLIC game ui dsa sfml-graphics sfml-window
     sfml-system)
 
 # comment everything below out if you are using CLion
