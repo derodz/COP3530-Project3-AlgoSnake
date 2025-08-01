@@ -52,6 +52,21 @@ public:
     }
 };
 
+bool SnakeOnGrid(queue<snakePart> &snake, int x, int y)
+{
+    auto tempSnake = snake;
+    while (!tempSnake.empty())
+    {
+        auto tempPart = tempSnake.front();
+        float gridXPos = x * 20.0f;
+        float gridYPos = y * 20.0f;
+        if (tempPart.xPos == gridXPos && tempPart.yPos == gridYPos)
+            return true;
+        tempSnake.pop();
+    }
+    return false;
+}
+
 void moveSnake(queue<snakePart> &snake, string dirrection)
 {
     auto tempSnake = snake;
