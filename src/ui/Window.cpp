@@ -1,4 +1,4 @@
-#include <ui/window.h>
+#include <Window.h>
 
 int test() {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Window");
