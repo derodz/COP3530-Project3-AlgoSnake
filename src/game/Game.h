@@ -11,6 +11,15 @@ enum class CellType { Empty, Food, Obstacle };
 enum class Algorithm { BFS, AStar };
 enum class Direction { Up, Down, Left, Right };
 
+// forward declarations
+vector<pair<int, int>> bfsGetPath(const Graph<CellType> &graph,
+                                  const deque<pair<int, int>> &snake,
+                                  pair<int, int> start, pair<int, int> target);
+vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
+                                    const deque<pair<int, int>> &snake,
+                                    pair<int, int> start,
+                                    pair<int, int> target);
+
 class Game {
 private:
   Graph<CellType> grid;
@@ -19,30 +28,25 @@ private:
   Algorithm algo;
 
   bool dead;
-  bool pathFound;
+  // vector<pair<int, int>> currentPath;
+  Direction curDirection;
 
   // rng related
   std::mt19937 rng;
   std::uniform_int_distribution<int> rowDist;
   std::uniform_int_distribution<int> colDist;
 
-  // manual interaction
-  Direction curDirection;
-
   void placeFood();
-
-  // TODO integrate pathfinding algos into snake. manual for now
-  vector<pair<int, int>> findPath();
+  vector<pair<int, int>> findPath(pair<int, int> target);
 
 public:
-  // Game();
   Game(unsigned seed, int rows, int cols);
   void update();
   void setAlgorithm(Algorithm algorithm) { algo = algorithm; };
 
-  // manual interaction
+  // manual interaction //
   void setDirection(Direction d);
-  //
+  ////////////////////////
 
   const deque<pair<int, int>> &getSnake() const { return snake; };
   pair<int, int> getFoodPos() const { return foodPos; };

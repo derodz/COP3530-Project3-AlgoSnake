@@ -63,10 +63,10 @@ vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
       int ny = nei.first, nx = nei.second;
       if (ny < 0 || ny >= rows || nx < 0 || nx >= cols)
         continue;
-      // Avoid snake body
+      // avoid snake body (except tail)
       if (find(snake.begin(), snake.end(), make_pair(ny, nx)) != snake.end())
         continue;
-      // Avoid obstacles
+      // avoid obstacles
       if (graph.getMatrixNode(ny, nx) == CellType::Obstacle)
         continue;
 

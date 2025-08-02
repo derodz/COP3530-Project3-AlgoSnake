@@ -2,9 +2,8 @@
 #include <algorithm>
 
 Game::Game(unsigned seed, int rows, int cols)
-    : grid(rows, cols), curDirection(Direction::Up), dead(false),
-      pathFound(false), rng(seed), rowDist(0, grid.getRows() - 1),
-      colDist(0, grid.getCols() - 1) {
+    : grid(rows, cols), curDirection(Direction::Up), dead(false), rng(seed),
+      rowDist(0, grid.getRows() - 1), colDist(0, grid.getCols() - 1) {
   foodPos = {-1, -1}; // invalid pos to avoid clearing junk on first placeFood
   snake.push_front({12, 5});
   snake.push_front({11, 5});
@@ -29,31 +28,38 @@ void Game::placeFood() {
   grid.setMatrixNode(foodPos.first, foodPos.second, CellType::Food);
 }
 
-vector<pair<int, int>> Game::findPath() { return {}; }
+vector<pair<int, int>> Game::findPath(pair<int, int> target) {
+  auto head = snake.front();
+  if (algo == Algorithm::BFS) {
+    return bfsGetPath(grid, snake, head, target);
+  } else {
+    return aStarGetPath(grid, snake, head, target);
+  }
+}
 
 void Game::update() {
   if (dead)
     return;
 
-  // TODO change to pathfinding driver
-  pair<int, int> delta;
-  switch (curDirection) {
-  case Direction::Up:
-    delta = {-1, 0};
-    break;
-  case Direction::Down:
-    delta = {1, 0};
-    break;
-  case Direction::Left:
-    delta = {0, -1};
-    break;
-  case Direction::Right:
-    delta = {0, 1};
-    break;
+	auto head = snake.front();
+  auto path = findPath(foodPos);
+  if (path.empty()) {
+    // this condition falls back to chasing the tail
+    auto tail = snake.back();
+		deque<pair<int, int>> tempSnake = snake;
+		tempSnake.pop_back();
+		if (algo == Algorithm::BFS) {
+			path = bfsGetPath(grid, tempSnake, head, tail);
+		} else {
+			path = aStarGetPath(grid, tempSnake, head, tail);
+		}
+		if (path.empty()) {
+			dead = true;
+			return;
+		}
   }
+  pair<int, int> newHead = path.front();
 
-  pair<int, int> newHead = {snake.front().first + delta.first,
-                            snake.front().second + delta.second};
   int rows = grid.getRows();
   int cols = grid.getCols();
 
@@ -74,8 +80,8 @@ void Game::update() {
     snake.pop_back();
   }
 
-  // Check self-collision (head in body)
-  auto head = snake.front();
+  // self collision check
+  head = snake.front();
   for (auto it = next(snake.begin()); it != snake.end(); ++it) {
     if (*it == head) {
       dead = true;

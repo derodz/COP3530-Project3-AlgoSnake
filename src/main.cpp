@@ -1,10 +1,13 @@
 #include <Game.h>
 #include <SFML/Graphics.hpp>
 #include <Window.h>
-#include <algorithm>
 
 int main() {
+	// init setup
   Game game(42, 20, 20);
+	game.setAlgorithm(Algorithm::BFS);
+	// game.setAlgorithm(Algorithm::AStar);
+
   UI ui;
 
   int width = game.getCols() * CELL_SIZE;
@@ -13,11 +16,12 @@ int main() {
   sf::RenderWindow window(sf::VideoMode(width, height), "AlgoSnake");
   window.setFramerateLimit(30);
 
-  sf::Clock clock;
-  float timer = 0.0f;
-  float baseDelay = 0.15f;
-  float minDelay = 0.01f;
-  float delay = baseDelay;
+	// // NOTE: for manual control
+  // sf::Clock clock;
+  // float timer = 0.0f;
+  // float baseDelay = 0.15f;
+  // float minDelay = 0.01f;
+  // float delay = baseDelay;
 
   while (window.isOpen()) {
     sf::Event event;
@@ -25,24 +29,26 @@ int main() {
       if (event.type == sf::Event::Closed) {
         window.close();
       }
-      ui.handleEvent(event, game);
+      // ui.handleEvent(event, game);
     }
 
-    if (!game.isDead()) {
-      float time = clock.restart().asSeconds();
-      timer += time;
-
-      if (timer > delay) {
-        game.update();
-        timer = 0.0f;
-
-        // delay based on food eaten (snake length - initial 3)
-        int foodEaten = static_cast<int>(game.getSnake().size()) - 3;
-        delay = std::max(minDelay, baseDelay - 0.01f * foodEaten);
-      }
-    } else {
-      // TODO
-    }
+		// // NOTE: for manual control
+    // if (!game.isDead()) {
+    //   float time = clock.restart().asSeconds();
+    //   timer += time;
+    //
+    //   if (timer > delay) {
+    //     game.update();
+    //     timer = 0.0f;
+    //
+    //     // delay based on food eaten (snake length - initial 3)
+    //     int foodEaten = static_cast<int>(game.getSnake().size()) - 3;
+    //     delay = std::max(minDelay, baseDelay - 0.01f * foodEaten);
+    //   }
+    // } else {
+    //   // TODO
+    // }
+		game.update();
 
     window.clear();
     ui.render(window, game);

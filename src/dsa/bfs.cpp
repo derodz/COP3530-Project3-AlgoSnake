@@ -42,11 +42,10 @@ vector<pair<int, int>> bfsGetPath(const Graph<CellType> &graph,
         continue;
       if (visited[ny][nx])
         continue;
-      // Avoid snake body (except tail if growing, but for simplicity avoid all;
-      // adjust if needed)
+			// avoid snake body (except tail)
       if (find(snake.begin(), snake.end(), make_pair(ny, nx)) != snake.end())
         continue;
-      // Avoid obstacles if any (assuming CellType::Obstacle blocks)
+      // avoid obstacles
       if (graph.getMatrixNode(ny, nx) == CellType::Obstacle)
         continue;
 
