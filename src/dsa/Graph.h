@@ -7,21 +7,20 @@
 // stored {up, down, left, right}
 const std::pair<int, int> STEPS[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
-// TODO ALTER GRAPH TO SPECIFIC TYPE, NOT T
 template <typename T> class Graph {
   int rows = 0, cols = 0;
   std::vector<std::vector<T>> adjMatrix;
 
 public:
-  Graph();
-  Graph(int r, int c) : rows(r), cols(c), adjMatrix(r, std::vector<T>(c)) {};
+  Graph(int r, int c)
+      : rows(r), cols(c), adjMatrix(r, std::vector<T>(c, T{})) {};
 
   void setMatrixDims(int r, int c) {
     rows = r;
     cols = c;
     adjMatrix.resize(r);
     for (auto &row : adjMatrix) {
-      row.resize(c);
+      row.resize(c, T{});
     }
   };
 
@@ -36,6 +35,7 @@ public:
     }
     return adjMatrix[y][x];
   }
+
   const T getMatrixNode(int y, int x) const {
     if (y < 0 || x < 0 || y >= rows || x >= cols) {
       std::stringstream ss;
@@ -45,7 +45,28 @@ public:
     return adjMatrix[y][x];
   }
 
+  void setMatrixNode(int y, int x, T val) {
+    if (y < 0 || x < 0 || y >= rows || x >= cols) {
+      std::stringstream ss;
+      ss << "Coordinate {" << y << ", " << x << "} is outside of matrix";
+      throw std::out_of_range(ss.str());
+    }
+    adjMatrix[y][x] = val;
+  }
+
   std::vector<std::pair<int, int>> getNodeNeighbors(int y, int x) {
+    std::vector<std::pair<int, int>> neighbors;
+    for (const auto &step : STEPS) {
+      int dy = step.first, dx = step.second;
+      int ny = y + dy, nx = x + dx;
+      if (ny >= 0 && nx >= 0 && ny < rows && nx < cols) {
+        neighbors.push_back({ny, nx});
+      }
+    }
+    return neighbors;
+  }
+
+  const std::vector<std::pair<int, int>> getNodeNeighbors(int y, int x) const {
     std::vector<std::pair<int, int>> neighbors;
     for (const auto &step : STEPS) {
       int dy = step.first, dx = step.second;

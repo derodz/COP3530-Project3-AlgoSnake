@@ -1,71 +1,70 @@
 #include <Graph.h>
-#include <Snake.h>
+#include <Game.h>
+#include <algorithm>
 #include <queue>
-#include <set>
-#include <stack>
+#include <unordered_map>
 #include <vector>
+
 using namespace std;
 
-/// @brief This function uses a modified  BFS to find the shortest path to the
-/// food in a grid represented by a Graph. Before adding a node to the path, it
-/// checks if the snake occupies the grid cell at the given coordinates. Once
-/// adding the node, it also adds it and its predecessor to the path stack.
-/// Finally, once the food is found, it converts the stack to a vector to return
-/// the path from the start to the food. If no food is found, the snake will
-/// eventually die by running into a wall or itself since the BFS will have
-/// traversed all possible paths.
-/// @param graph
-/// @param snake
-/// @param startX
-/// @param startY
-/// @return
-vector<pair<int, int>> GetShortestPath(Graph<bool> &graph, queue<SnakePart> &snake, int startX, int startY)
-{
-    // Pair of pairs,
-    // First pair: coordinates (x, y). The first on top of the stack is where the food was found, else the next step.
-    // Second pair: coordinates (x, y) of the predecessor in the path.
-    stack<pair<pair<int, int>, pair<int, int>>> path;
-    queue<pair<int, int>> q;
-    q.push({startX, startY});
-    path.push({{startX, startY}, {-1, -1}});
+vector<pair<int, int>> bfsGetPath(const Graph<CellType> &graph,
+                                  const deque<pair<int, int>> &snake,
+                                  pair<int, int> start, pair<int, int> target) {
+  int rows = graph.getRows();
+  int cols = graph.getCols();
 
-    while (!q.empty())
-    {
-        auto coordinates = q.front();
-        auto node = graph.getMatrixNode(coordinates.first, coordinates.second);
+  // BFS setup
+  queue<pair<int, int>> q;
+  unordered_map<int, pair<int, int>>
+      prev; // key: row*cols + col, value: predecessor
+  vector<vector<bool>> visited(rows, vector<bool>(cols, false));
 
-        if (node)
-            // food is at node
-            break;
+  auto toKey = [cols](int row, int col) { return row * cols + col; };
 
-        auto neighbors = graph.getNodeNeighbors(startY, startX);
+  q.push(start);
+  visited[start.first][start.second] = true;
+  prev[toKey(start.first, start.second)] = {-1, -1};
 
-        q.pop();
+  bool found = false;
+  while (!q.empty()) {
+    auto curr = q.front();
+    q.pop();
 
-        for (const auto &neighbor : neighbors)
-        {
-            int ny = neighbor.first, nx = neighbor.second;
-
-            if (!SnakeOnGrid(snake, nx, ny))
-            {
-                q.push({nx, ny});
-                path.push({{nx, ny}, coordinates});
-            }
-        }
+    if (curr == target) {
+      found = true;
+      break;
     }
 
-    // Convert the stack path to a vector so the snake can follow it from beginning to end.
-    vector<pair<int, int>> finalPath;
-    while (!path.empty())
-    {
-        auto current = path.top();
-        path.pop();
+    auto neighbors = graph.getNodeNeighbors(curr.first, curr.second);
+    for (const auto &nei : neighbors) {
+      int ny = nei.first, nx = nei.second;
+      if (ny < 0 || ny >= rows || nx < 0 || nx >= cols)
+        continue;
+      if (visited[ny][nx])
+        continue;
+			// avoid snake body (except tail)
+      if (find(snake.begin(), snake.end(), make_pair(ny, nx)) != snake.end())
+        continue;
+      // avoid obstacles
+      if (graph.getMatrixNode(ny, nx) == CellType::Obstacle)
+        continue;
 
-        // If the predecessor is -1, it means we reached the start of the path.
-        if (current.second.first == -1 && current.second.second == -1)
-            break;
-
-        finalPath.push_back(current.first);
+      visited[ny][nx] = true;
+      q.push({ny, nx});
+      prev[toKey(ny, nx)] = curr;
     }
-    return finalPath;
+  }
+
+  if (!found)
+    return {};
+
+  // Reconstruct path
+  vector<pair<int, int>> path;
+  auto curr = target;
+  while (curr != start) {
+    path.push_back(curr);
+    curr = prev[toKey(curr.first, curr.second)];
+  }
+  reverse(path.begin(), path.end());
+  return path;
 }
