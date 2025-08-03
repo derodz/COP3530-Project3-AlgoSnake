@@ -13,10 +13,10 @@ FetchContent_Declare(
     GIT_TAG v3.5.2 # if you run into issues, try updating your editor or downgrading to a lower version of catch v3
 )
 FetchContent_MakeAvailable(Catch2)
-# include_directories(${CMAKE_SOURCE_DIR}/include)
-SET(SFML_DIR "C:\\SFML-2.6.2-x64\\lib\\cmake\\SFML")
+SET(SFML_DIR "C:/SFML-2.6.2-x64/lib/cmake/SFML")
+SET(SFML_INCLUDE_DIRS "C:/SFML-2.6.2-x64/bin")
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
-# include_directories(${SFML_INCLUDE_DIRS}) 
+
 add_subdirectory(src/game)
 add_subdirectory(src/ui)
 add_subdirectory(src/dsa)
@@ -24,12 +24,37 @@ add_subdirectory(src/dsa)
 add_executable(Main src/main.cpp)
 add_executable(Tests test/test.cpp)
 
-target_include_directories(Main PUBLIC ${SFML_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain)
-target_link_libraries(Main PUBLIC game ui dsa sfml-graphics sfml-window
-    sfml-system)
+target_link_libraries(Main PUBLIC game ui dsa sfml-graphics sfml-window sfml-system)
 
 # comment everything below out if you are using CLion
 include(CTest)
 include(Catch)
+
+# Copy arial.ttf to the output directories of Main and Tests
+foreach(target Main Tests)
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/src/arial.ttf" $<TARGET_FILE_DIR:${target}>)
+endforeach()
+
+# bring SFML dlls into build folder
+if(WIN32)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        file(GLOB SFML_DLLS "C:/SFML-2.6.2-x64/bin/*-d-2.dll")
+    else()
+        file(GLOB SFML_DLLS "C:/SFML-2.6.2-x64/bin/sfml-*-2.dll")
+    endif()
+
+    foreach(DLL ${SFML_DLLS})
+        add_custom_command(TARGET Main POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${DLL}" $<TARGET_FILE_DIR:Main>)
+
+        add_custom_command(TARGET Tests POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${DLL}" $<TARGET_FILE_DIR:Tests>)
+    endforeach()
+endif()
+
 catch_discover_tests(Tests)
