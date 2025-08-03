@@ -4,8 +4,13 @@
 
 const int CELL_SIZE = 20;
 
-class GamePanel {
+class GamePanel
+{
   sf::RectangleShape bg;
+  sf::Font font;
+  sf::Text statsText;
+  sf::Text elapsedTimeText;
+  sf::RectangleShape statsBg;
   sf::CircleShape segment;
   sf::CircleShape foodShape;
   sf::RectangleShape bigX[2];
@@ -15,7 +20,8 @@ public:
   void render(sf::RenderWindow &window, const Game &game);
 };
 
-class UI {
+class UI
+{
   GamePanel gamePanel;
 
 public:

@@ -2,37 +2,41 @@
 #include <SFML/Graphics.hpp>
 #include <Window.h>
 
-int main() {
-	// init setup
+int main()
+{
+  // init setup
   Game game(42, 20, 20);
-	game.setAlgorithm(Algorithm::BFS);
-	// game.setAlgorithm(Algorithm::AStar);
+  game.setAlgorithm(Algorithm::BFS);
+  // game.setAlgorithm(Algorithm::AStar);
 
   UI ui;
 
   int width = game.getCols() * CELL_SIZE;
-  int height = game.getRows() * CELL_SIZE;
+  int height = (game.getRows() + 4) * CELL_SIZE;
 
   sf::RenderWindow window(sf::VideoMode(width, height), "AlgoSnake");
   window.setFramerateLimit(30);
 
-	// // NOTE: for manual control
+  // // NOTE: for manual control
   // sf::Clock clock;
   // float timer = 0.0f;
   // float baseDelay = 0.15f;
   // float minDelay = 0.01f;
   // float delay = baseDelay;
 
-  while (window.isOpen()) {
+  while (window.isOpen())
+  {
     sf::Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
+    while (window.pollEvent(event))
+    {
+      if (event.type == sf::Event::Closed)
+      {
         window.close();
       }
       // ui.handleEvent(event, game);
     }
 
-		// // NOTE: for manual control
+    // // NOTE: for manual control
     // if (!game.isDead()) {
     //   float time = clock.restart().asSeconds();
     //   timer += time;
@@ -48,7 +52,7 @@ int main() {
     // } else {
     //   // TODO
     // }
-		game.update();
+    game.update();
 
     window.clear();
     ui.render(window, game);

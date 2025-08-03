@@ -1,7 +1,16 @@
 #include <Window.h>
 
-GamePanel::GamePanel() {
+GamePanel::GamePanel()
+{
+  font.loadFromFile("arial.ttf");
   bg.setFillColor(sf::Color::Black);
+  statsBg.setFillColor(sf::Color::White);
+  statsText.setFont(font);
+  elapsedTimeText.setFont(font);
+  statsText.setCharacterSize(static_cast<unsigned int>(CELL_SIZE * 1.2f));
+  statsText.setFillColor(sf::Color::Black);
+  elapsedTimeText.setCharacterSize(static_cast<unsigned int>(CELL_SIZE * 1.2f));
+  elapsedTimeText.setFillColor(sf::Color::Black);
   segment.setRadius(CELL_SIZE / 2.0f);
   foodShape.setRadius(CELL_SIZE / 2.0f);
   foodShape.setFillColor(sf::Color::Red);
@@ -23,11 +32,26 @@ GamePanel::GamePanel() {
   bigX[1].setRotation(-45.0f);
 }
 
-void GamePanel::render(sf::RenderWindow &window, const Game &game) {
+void GamePanel::render(sf::RenderWindow &window, const Game &game)
+{
   int rows = game.getRows();
   int cols = game.getCols();
   bg.setSize(sf::Vector2f(cols * CELL_SIZE, rows * CELL_SIZE));
   window.draw(bg);
+
+  // draw stats
+  statsBg.setSize(sf::Vector2f(cols * CELL_SIZE, 4 * CELL_SIZE));
+  statsBg.setPosition(0, rows * CELL_SIZE);
+
+  statsText.setString("Food Eaten: " + std::to_string(game.getFoodsEaten()));
+  statsText.setPosition(10.0f, rows * CELL_SIZE);
+
+  elapsedTimeText.setString("Elapsed Time: " + std::to_string(game.getElapsedTime()) + "s");
+  elapsedTimeText.setPosition(10.0f, (rows + 2) * CELL_SIZE);
+
+  window.draw(statsBg);
+  window.draw(statsText);
+  window.draw(elapsedTimeText);
 
   // draw food
   auto food = game.getFoodPos();
@@ -35,35 +59,42 @@ void GamePanel::render(sf::RenderWindow &window, const Game &game) {
   window.draw(foodShape);
 
   // if dead, draw bigX
-  if (game.isDead()) {
+  if (game.isDead())
+  {
     window.draw(bigX[0]);
     window.draw(bigX[1]);
   }
 
   // draw snake
   const auto &snake = game.getSnake();
-  if (!snake.empty()) {
+  if (!snake.empty())
+  {
     auto it = snake.begin();
     segment.setFillColor(sf::Color::Magenta);
     segment.setPosition(it->second * CELL_SIZE, it->first * CELL_SIZE);
     window.draw(segment);
     ++it;
     segment.setFillColor(sf::Color::Blue);
-    for (; it != snake.end(); ++it) {
+    for (; it != snake.end(); ++it)
+    {
       segment.setPosition(it->second * CELL_SIZE, it->first * CELL_SIZE);
       window.draw(segment);
     }
   }
 }
 
-void UI::render(sf::RenderWindow &window, const Game &game) {
+void UI::render(sf::RenderWindow &window, const Game &game)
+{
   gamePanel.render(window, game);
 }
 
-void UI::handleEvent(const sf::Event &event, Game &game) {
+void UI::handleEvent(const sf::Event &event, Game &game)
+{
   // supports arrow keys or WASD
-  if (event.type == sf::Event::KeyPressed) {
-    switch (event.key.code) {
+  if (event.type == sf::Event::KeyPressed)
+  {
+    switch (event.key.code)
+    {
     case sf::Keyboard::Up:
     case sf::Keyboard::W:
       game.setDirection(Direction::Up);
