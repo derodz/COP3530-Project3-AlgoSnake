@@ -1,21 +1,45 @@
 #include <Game.h>
 #include <SFML/Graphics.hpp>
 #include <Window.h>
+#include <fstream>
+using namespace std;
 
 int main()
 {
+  // read config file
+  ifstream configFile("game.config");
+  if (!configFile.is_open())
+  {
+    throw runtime_error("Failed to open game.config");
+  }
+
+  int cellCount = 0;
+  configFile >> cellCount;
+  if (cellCount == 0)
+  {
+    throw runtime_error("Invalid row count in game.config");
+  }
+
+  int frameRate = 0;
+  ;
+  configFile >> frameRate;
+  if (frameRate == 0)
+  {
+    throw runtime_error("Invalid frame rate in game.config");
+  }
+
   // init setup
-  Game game(42, 20, 20);
+  Game game(42, cellCount, cellCount);
   game.setAlgorithm(Algorithm::BFS);
   // game.setAlgorithm(Algorithm::AStar);
 
   UI ui;
 
   int width = game.getCols() * CELL_SIZE;
-  int height = (game.getRows() + 4) * CELL_SIZE;
+  int height = game.getRows() * CELL_SIZE + 300; // 300 for gui and stats panel
 
   sf::RenderWindow window(sf::VideoMode(width, height), "AlgoSnake");
-  window.setFramerateLimit(30);
+  window.setFramerateLimit(frameRate);
 
   // // NOTE: for manual control
   // sf::Clock clock;

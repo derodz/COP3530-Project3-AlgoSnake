@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <chrono>
+#include <math.h>
 
 using namespace std;
 
@@ -44,7 +45,9 @@ private:
   deque<pair<int, int>> snake;
   pair<int, int> foodPos;
   chrono::_V2::steady_clock::time_point startTime = chrono::steady_clock::now();
-  int elapsedTime;
+  int elapsedTime = 0; // in seconds
+  int stepsTaken = 0;
+  vector<int> compTimes; // in nanoseconds
   Algorithm algo;
 
   bool dead;
@@ -75,6 +78,11 @@ public:
   bool isDead() const { return dead; };
   int getFoodsEaten() const { return snake.size() - 1; };
   void calculateElapsedTime();
+  void incrementStepsTaken() { stepsTaken++; };
+  int getStepsTaken() const { return stepsTaken; };
   int getElapsedTime() const { return elapsedTime; };
+  int getAvgCompTime() const;
+  void addCompTime(int time);
   void printStats() { cout << "Foods eaten: " << getFoodsEaten() << endl; };
+  Algorithm getAlgorithm() const { return algo; }
 };

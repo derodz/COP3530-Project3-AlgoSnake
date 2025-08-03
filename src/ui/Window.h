@@ -8,9 +8,16 @@ class GamePanel
 {
   sf::RectangleShape bg;
   sf::Font font;
+  sf::Text snakeTypeText;
   sf::Text statsText;
   sf::Text elapsedTimeText;
+  sf::Text stepsTakenText;
+  sf::Text avgCompTimeText;
   sf::RectangleShape statsBg;
+  sf::Texture btnAstarTexture;
+  sf::Texture btnBFSTexture;
+  sf::RectangleShape btnAstar;
+  sf::RectangleShape btnBFS;
   sf::CircleShape segment;
   sf::CircleShape foodShape;
   sf::RectangleShape bigX[2];

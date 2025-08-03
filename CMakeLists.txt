@@ -36,6 +36,15 @@ foreach(target Main Tests)
     add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_SOURCE_DIR}/src/arial.ttf" $<TARGET_FILE_DIR:${target}>)
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/src/game.config" $<TARGET_FILE_DIR:${target}>)
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/src/btn_astar.jpg" $<TARGET_FILE_DIR:${target}>)
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/src/btn_bfs.jpg" $<TARGET_FILE_DIR:${target}>)
 endforeach()
 
 # bring SFML dlls into build folder

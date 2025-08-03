@@ -37,14 +37,21 @@ void Game::placeFood()
 vector<pair<int, int>> Game::findPath(pair<int, int> target)
 {
   auto head = snake.front();
+  auto start = chrono::steady_clock::now();
+  vector<pair<int, int>> path;
   if (algo == Algorithm::BFS)
   {
-    return bfsGetPath(grid, snake, head, target);
+    path = bfsGetPath(grid, snake, head, target);
   }
   else
   {
-    return aStarGetPath(grid, snake, head, target);
+    path = aStarGetPath(grid, snake, head, target);
   }
+  auto end = chrono::steady_clock::now();
+  int compTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+  addCompTime(compTime);
+
+  return path;
 }
 
 void Game::update()
@@ -62,6 +69,7 @@ void Game::update()
     auto tail = snake.back();
     deque<pair<int, int>> tempSnake = snake;
     tempSnake.pop_back();
+    auto start = chrono::steady_clock::now();
     if (algo == Algorithm::BFS)
     {
       path = bfsGetPath(grid, tempSnake, head, tail);
@@ -70,6 +78,10 @@ void Game::update()
     {
       path = aStarGetPath(grid, tempSnake, head, tail);
     }
+    auto end = chrono::steady_clock::now();
+    int compTime = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    addCompTime(compTime);
+
     if (path.empty())
     {
       // no current path found, try continuing in the current direction
@@ -143,6 +155,8 @@ void Game::update()
       break;
     }
   }
+
+  incrementStepsTaken();
 }
 
 void Game::setDirection(Direction d)
@@ -161,4 +175,21 @@ void Game::calculateElapsedTime()
 {
   auto now = std::chrono::steady_clock::now();
   elapsedTime = chrono::duration_cast<chrono::seconds>(now - startTime).count();
+}
+
+int Game::getAvgCompTime() const
+{
+  if (compTimes.empty())
+    return 0;
+  int sum = 0;
+  for (int t : compTimes)
+  {
+    sum += t;
+  }
+  return sum / compTimes.size();
+}
+
+void Game::addCompTime(int time)
+{
+  compTimes.push_back(time);
 }
