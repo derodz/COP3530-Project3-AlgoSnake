@@ -26,13 +26,11 @@ GamePanel::GamePanel()
   avgCompTimeText.setCharacterSize(static_cast<unsigned int>(24));
   avgCompTimeText.setFillColor(sf::Color::Black);
 
-  btnAstar.setSize(sf::Vector2f(200, 100));
-  btnAstarTexture.loadFromFile("btn_astar.jpg");
-  btnAstar.setTexture(&btnAstarTexture);
+  aStarTexture.loadFromFile("btn_astar.jpg");
+  spriteAstar.setTexture(aStarTexture);
 
-  btnBFS.setSize(sf::Vector2f(200, 100));
-  btnBFSTexture.loadFromFile("btn_bfs.jpg");
-  btnBFS.setTexture(&btnBFSTexture);
+  bFSTexture.loadFromFile("btn_bfs.jpg");
+  spriteBFS.setTexture(bFSTexture);
 
   segment.setRadius(CELL_SIZE / 2.0f);
   foodShape.setRadius(CELL_SIZE / 2.0f);
@@ -87,11 +85,8 @@ void GamePanel::render(sf::RenderWindow &window, const Game &game)
   avgCompTimeText.setString("Avg Computation Time: " + std::to_string(game.getAvgCompTime()) + " ns");
   avgCompTimeText.setPosition(10.0f, rows * CELL_SIZE + 170.0f);
 
-  window.draw(btnAstar);
-  btnAstar.setPosition(cols * CELL_SIZE - 210, rows * CELL_SIZE + 10);
-
-  window.draw(btnBFS);
-  btnBFS.setPosition(cols * CELL_SIZE - 210, rows * CELL_SIZE + 120);
+  spriteAstar.setPosition(cols * CELL_SIZE - 210, rows * CELL_SIZE + 10);
+  spriteBFS.setPosition(cols * CELL_SIZE - 210, rows * CELL_SIZE + 120);
 
   window.draw(bg);
   window.draw(statsBg);
@@ -100,8 +95,8 @@ void GamePanel::render(sf::RenderWindow &window, const Game &game)
   window.draw(elapsedTimeText);
   window.draw(stepsTakenText);
   window.draw(avgCompTimeText);
-  window.draw(btnAstar);
-  window.draw(btnBFS);
+  window.draw(spriteAstar);
+  window.draw(spriteBFS);
 
   // draw food
   auto food = game.getFoodPos();
@@ -163,6 +158,20 @@ void UI::handleEvent(const sf::Event &event, Game &game)
       break;
     default:
       break;
+    }
+  }
+  else if (event.type == sf::Event::MouseButtonPressed)
+  {
+    if (event.mouseButton.button == sf::Mouse::Left)
+    {
+      if (gamePanel.getAStarSprite().getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
+      {
+        // game.setAlgorithm(Algorithm::AStar);
+      }
+      else if (gamePanel.getBFSSprite().getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
+      {
+        // game.setAlgorithm(Algorithm::BFS);
+      }
     }
   }
 }

@@ -14,16 +14,20 @@ class GamePanel
   sf::Text stepsTakenText;
   sf::Text avgCompTimeText;
   sf::RectangleShape statsBg;
-  sf::Texture btnAstarTexture;
-  sf::Texture btnBFSTexture;
-  sf::RectangleShape btnAstar;
-  sf::RectangleShape btnBFS;
+  sf::Texture aStarTexture;
+  sf::Texture bFSTexture;
+  sf::Texture aStarTexture_pressed;
+  sf::Texture bFSTexture_pressed;
+  sf::Sprite spriteAstar;
+  sf::Sprite spriteBFS;
   sf::CircleShape segment;
   sf::CircleShape foodShape;
   sf::RectangleShape bigX[2];
 
 public:
   GamePanel();
+  sf::Sprite getAStarSprite() const { return spriteAstar; }
+  sf::Sprite getBFSSprite() const { return spriteBFS; }
   void render(sf::RenderWindow &window, const Game &game);
 };
 

@@ -48,6 +48,10 @@ int main()
   // float minDelay = 0.01f;
   // float delay = baseDelay;
 
+  cout << "Frame rate: " << frameRate << endl;
+  cout << "Cell count: " << cellCount << endl;
+  cout << "Window size: " << width << "x" << height << endl;
+  cout << "Game starting..." << endl;
   while (window.isOpen())
   {
     sf::Event event;
@@ -57,7 +61,7 @@ int main()
       {
         window.close();
       }
-      // ui.handleEvent(event, game);
+      ui.handleEvent(event, game);
     }
 
     // // NOTE: for manual control
@@ -82,6 +86,6 @@ int main()
     ui.render(window, game);
     window.display();
   }
-
+  cout << "Game ended." << endl;
   return 0;
 }

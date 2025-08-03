@@ -110,7 +110,6 @@ void Game::update()
       {
         // no valid moves left, game over
         dead = true;
-        cout << "Game ended after " << elapsedTime << " seconds.";
         return;
       }
     }
@@ -125,7 +124,6 @@ void Game::update()
   {
     // hit wall
     dead = true;
-    cout << "Game ended after " << elapsedTime << " seconds.";
     return;
   }
 
@@ -134,7 +132,6 @@ void Game::update()
 
   if (eat)
   {
-    printStats();
     pair<int, int> oldFood = foodPos;
     placeFood();
     grid.setMatrixNode(oldFood.first, oldFood.second, CellType::Empty);
@@ -151,7 +148,6 @@ void Game::update()
     if (*it == head)
     {
       dead = true;
-      cout << "Game ended after " << elapsedTime << " seconds.";
       break;
     }
   }
