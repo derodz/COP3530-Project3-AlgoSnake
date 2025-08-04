@@ -1,33 +1,18 @@
 #pragma once
 #include <Graph.h>
+#include <chrono>
 #include <deque>
+#include <iostream>
+#include <math.h>
 #include <random>
 #include <utility>
 #include <vector>
-#include <iostream>
-#include <chrono>
-#include <math.h>
 
 using namespace std;
 
-enum class CellType
-{
-  Empty,
-  Food,
-  Obstacle
-};
-enum class Algorithm
-{
-  BFS,
-  AStar
-};
-enum class Direction
-{
-  Up,
-  Down,
-  Left,
-  Right
-};
+enum class CellType { Empty, Food, Obstacle };
+enum class Algorithm { BFS, AStar };
+enum class Direction { Up, Down, Left, Right };
 
 // forward declarations
 vector<pair<int, int>> bfsGetPath(const Graph<CellType> &graph,
@@ -38,8 +23,7 @@ vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
                                     pair<int, int> start,
                                     pair<int, int> target);
 
-class Game
-{
+class Game {
 private:
   Graph<CellType> grid;
   deque<pair<int, int>> snake;
@@ -85,4 +69,5 @@ public:
   void addCompTime(int time);
   void printStats() { cout << "Foods eaten: " << getFoodsEaten() << endl; };
   Algorithm getAlgorithm() const { return algo; }
+	void reset();
 };
