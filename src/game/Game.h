@@ -5,6 +5,8 @@
 #include <iostream>
 #include <math.h>
 #include <random>
+#include <string>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -54,6 +56,9 @@ private:
   vector<PerCallStat> perCallStats;
   int failureDistance;
   bool savedSummary;
+
+  // for detecting inescapable loops via state repetition
+  unordered_set<string> seen_states_since_eat;
 
 public:
   Game(unsigned seed, int rows, int cols);

@@ -4,6 +4,8 @@
 #include <fstream>
 #include <iostream>
 #include <queue>
+#include <string>
+#include <unordered_set>
 
 Game::Game(unsigned seed, int rows, int cols)
     : grid(rows, cols), dead(false), rng(seed), rowDist(0, grid.getRows() - 1),
@@ -16,6 +18,7 @@ Game::Game(unsigned seed, int rows, int cols)
   placeFood();
   failureDistance = -1;
   savedSummary = true; // initial no save needed
+  seen_states_since_eat.clear();
 }
 
 void Game::reset(Algorithm newAlgo) {
@@ -36,6 +39,7 @@ void Game::reset(Algorithm newAlgo) {
   failureDistance = -1;
   savedSummary = false;
   initStatsFile(newAlgo);
+  seen_states_since_eat.clear();
 }
 
 void Game::placeFood() {
@@ -243,8 +247,26 @@ void Game::update() {
     pair<int, int> oldFood = foodPos;
     placeFood();
     grid.setMatrixNode(oldFood.first, oldFood.second, CellType::Empty);
+    seen_states_since_eat.clear();
   } else {
     snake.pop_back();
+  }
+
+  // state repetition detection for inescapable loops
+  string state_str;
+  for (const auto &p : snake) {
+    state_str += to_string(p.first) + "," + to_string(p.second) + ";";
+  }
+  if (!eat && seen_states_since_eat.count(state_str)) {
+    dead = true;
+    failureDistance = std::abs(newHead.first - foodPos.first) +
+                      std::abs(newHead.second - foodPos.second);
+    if (!savedSummary) {
+      saveSummary();
+      savedSummary = true;
+    }
+  } else {
+    seen_states_since_eat.insert(state_str);
   }
 
   // self collision check
