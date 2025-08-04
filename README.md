@@ -1,8 +1,8 @@
 # AlgoSnake
 
-Class COP3530 (Summer 2025)
-Group 72
-Team Members: Hannah Dixon, Daniel Rodriguez, Ian Rodriguez-Page
+Class COP3530 (Summer 2025)<br>
+Group 72<br>
+Team Members: Hannah Dixon, Daniel Rodriguez, Ian Rodriguez-Page<br>
 
 ---
 
@@ -34,12 +34,13 @@ Provided that you have VS Code recognizing your tool chain, the only other step 
 ---
 
 As mentioned, all dependencies are built in to the executable. The only thing you need to do is configure the game to your liking in the `game.config` file.
-
-Line 1: Board size (e.g. a value of 20 will produce 20 x 20 game board)
-Line 2: Frame rate (make sure it doesn't exceed your monitor's refresh rate)
-Line 3: Cell Size (the size of each cell in the game board; useful for scaling when board size is large)
+<br>
+Line 1: Board size (e.g. a value of 20 will produce 20 x 20 game board)<br>
+Line 2: Frame rate (make sure it doesn't exceed your monitor's refresh rate)<br>
+Line 3: Cell Size (the size of each cell in the game board; useful for scaling when board size is large)<br>
 
 That's it! Just run the Main.exe and you can select which algorithm you want to play the snake. You can reset the game with a different algorithm once it finishes or view final stats.
+<br>
 
 ![Gameplay](/snake-gameplay.png?raw=true 'Gameplay')
 ![Game Over](/snake-gameover.png?raw=true 'Game Over')
