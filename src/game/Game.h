@@ -12,7 +12,6 @@ using namespace std;
 
 enum class CellType { Empty, Food };
 enum class Algorithm { None, BFS, AStar };
-enum class Direction { Up, Down, Left, Right };
 
 // forward declarations
 std::pair<vector<pair<int, int>>, int>
@@ -44,7 +43,6 @@ private:
   Algorithm algo;
 
   bool dead;
-  Direction curDirection;
   int failureDistance;
   bool savedSummary;
 
@@ -61,10 +59,6 @@ public:
   void reset(Algorithm newAlgo);
   void update();
   void setAlgorithm(Algorithm algorithm) { algo = algorithm; };
-
-  // manual interaction //
-  void setDirection(Direction d);
-  ////////////////////////
 
   const deque<pair<int, int>> &getSnake() const { return snake; };
   pair<int, int> getFoodPos() const { return foodPos; };

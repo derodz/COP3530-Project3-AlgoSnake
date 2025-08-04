@@ -6,8 +6,8 @@
 #include <queue>
 
 Game::Game(unsigned seed, int rows, int cols)
-    : grid(rows, cols), curDirection(Direction::Up), dead(false), rng(seed),
-      rowDist(0, grid.getRows() - 1), colDist(0, grid.getCols() - 1) {
+    : grid(rows, cols), dead(false), rng(seed), rowDist(0, grid.getRows() - 1),
+      colDist(0, grid.getCols() - 1) {
   algo = Algorithm::None;
   foodPos = {-1, -1}; // invalid pos to avoid clearing junk on first placeFood
   snake.push_front({grid.getRows() / 2 + 2, grid.getCols() / 2});
@@ -33,7 +33,6 @@ void Game::reset(Algorithm newAlgo) {
   compTimes.clear();
   nodesExplored.clear();
   perCallStats.clear();
-  curDirection = Direction::Up;
   failureDistance = -1;
   savedSummary = false;
   initStatsFile(newAlgo);
@@ -257,16 +256,6 @@ void Game::update() {
   }
 
   incrementStepsTaken();
-}
-
-void Game::setDirection(Direction d) {
-  if ((curDirection == Direction::Up && d == Direction::Down) ||
-      (curDirection == Direction::Down && d == Direction::Up) ||
-      (curDirection == Direction::Left && d == Direction::Right) ||
-      (curDirection == Direction::Right && d == Direction::Left)) {
-    return;
-  }
-  curDirection = d;
 }
 
 void Game::calculateElapsedTime() {
