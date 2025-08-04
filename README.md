@@ -35,10 +35,11 @@ Provided that you have VS Code recognizing your tool chain, the only other step 
 
 As mentioned, all dependencies are built in to the executable. The only thing you need to do is configure the game to your liking in the `game.config` file.
 
-<br><br>
+<p>
 Line 1: Board size (e.g. a value of 20 will produce 20 x 20 game board)<br>
 Line 2: Frame rate (make sure it doesn't exceed your monitor's refresh rate)<br>
 Line 3: Cell Size (the size of each cell in the game board; useful for scaling when board size is large)<br>
+</p>
 
 That's it! Just run the Main.exe and you can select which algorithm you want to play the snake. You can reset the game with a different algorithm once it finishes or view final stats.
 <br>
