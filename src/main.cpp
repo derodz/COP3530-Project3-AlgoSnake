@@ -28,18 +28,17 @@ int main()
     throw runtime_error("Invalid frame rate in game.config");
   }
 
-  // init setup
   Game game(42, cellCount, cellCount);
 
-  UI ui;
   int cellSize = 0;
   configFile >> cellSize;
   if (cellSize == 0)
   {
     throw runtime_error("Invalid cell size in game.config");
   }
-  ui.setCellSize(cellSize);
+  UI ui(cellSize);
 
+  // init setup
   int width = game.getCols() * ui.getCellSize();
   int height = game.getRows() * ui.getCellSize() + 250; // 250 for gui and stats panel
 
