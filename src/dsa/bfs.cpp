@@ -45,7 +45,7 @@ bfsGetPath(const Graph<CellType> &graph, const deque<pair<int, int>> &snake,
       if (visited[ny][nx])
         continue;
       // avoid snake body (except tail)
-      if (find(snake.begin(), snake.end(), make_pair(ny, nx)) != snake.end())
+      if (find(snake.begin(), snake.end(), nei) != snake.end() && nei != target)
         continue;
 
       visited[ny][nx] = true;

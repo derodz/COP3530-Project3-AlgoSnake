@@ -34,25 +34,26 @@ private:
   Graph<CellType> grid;
   deque<pair<int, int>> snake;
   pair<int, int> foodPos;
-  chrono::_V2::steady_clock::time_point startTime = chrono::steady_clock::now();
-  int elapsedTime = 0; // in seconds
-  int stepsTaken = 0;
-  vector<long long> compTimes; // in microseconds
-  vector<int> nodesExplored;
-  vector<PerCallStat> perCallStats;
   Algorithm algo;
-
   bool dead;
-  int failureDistance;
-  bool savedSummary;
+
+  void placeFood();
+  std::pair<vector<pair<int, int>>, int> findPath(pair<int, int> target);
 
   // rng related
   std::mt19937 rng;
   std::uniform_int_distribution<int> rowDist;
   std::uniform_int_distribution<int> colDist;
 
-  void placeFood();
-  std::pair<vector<pair<int, int>>, int> findPath(pair<int, int> target);
+  // stats related
+  chrono::_V2::steady_clock::time_point startTime = chrono::steady_clock::now();
+  int elapsedTime = 0; // in seconds
+  int stepsTaken = 0;
+  vector<long long> compTimes; // in microseconds
+  vector<int> nodesExplored;
+  vector<PerCallStat> perCallStats;
+  int failureDistance;
+  bool savedSummary;
 
 public:
   Game(unsigned seed, int rows, int cols);
@@ -72,11 +73,11 @@ public:
   int getElapsedTime() const { return elapsedTime; };
   long long getAvgCompTime() const;
   int getAvgNodesExplored() const;
-  int getFailureDistance() const { return failureDistance; }
-  void addCompTime(long long time);
+  int getFailureDistance() const { return failureDistance; };
+  void addCompTime(long long time) { compTimes.push_back(time); };
   void addNodesExplored(int nodes);
   void printStats() { cout << "Foods eaten: " << getFoodsEaten() << endl; };
-  Algorithm getAlgorithm() const { return algo; }
+  Algorithm getAlgorithm() const { return algo; };
   void initStatsFile(Algorithm newAlgo);
   void saveSummary();
   int countReachable(const deque<pair<int, int>> &simSnake,
