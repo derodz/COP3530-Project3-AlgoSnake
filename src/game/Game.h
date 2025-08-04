@@ -18,6 +18,7 @@ enum class CellType
 };
 enum class Algorithm
 {
+  None,
   BFS,
   AStar
 };
@@ -64,6 +65,7 @@ private:
 
 public:
   Game(unsigned seed, int rows, int cols);
+  void reset(Algorithm newAlgo);
   void update();
   void setAlgorithm(Algorithm algorithm) { algo = algorithm; };
 
@@ -76,7 +78,7 @@ public:
   int getRows() const { return grid.getRows(); };
   int getCols() const { return grid.getCols(); };
   bool isDead() const { return dead; };
-  int getFoodsEaten() const { return snake.size() - 1; };
+  int getFoodsEaten() const { return snake.size() - 3; };
   void calculateElapsedTime();
   void incrementStepsTaken() { stepsTaken++; };
   int getStepsTaken() const { return stepsTaken; };
@@ -85,4 +87,6 @@ public:
   void addCompTime(int time);
   void printStats() { cout << "Foods eaten: " << getFoodsEaten() << endl; };
   Algorithm getAlgorithm() const { return algo; }
+  void initStatsFile(Algorithm newAlgo);
+  void saveStats(int foodEaten, int stepsTaken, int elapsedTime, int compTime);
 };

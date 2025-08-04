@@ -31,20 +31,18 @@ target_link_libraries(Main PUBLIC game ui dsa sfml-graphics sfml-window sfml-sys
 include(CTest)
 include(Catch)
 
-# Copy arial.ttf to the output directories of Main and Tests
+# Copy fonts and images to the output directories of Main and Tests
 foreach(target Main Tests)
     add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/src/arial.ttf" $<TARGET_FILE_DIR:${target}>)
-    add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${CMAKE_SOURCE_DIR}/src/game.config" $<TARGET_FILE_DIR:${target}>)
-    add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/src/btn_astar.jpg" $<TARGET_FILE_DIR:${target}>)
-    add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_SOURCE_DIR}/src/btn_bfs.jpg" $<TARGET_FILE_DIR:${target}>)
+    file(GLOB ASSET_FILES "${CMAKE_SOURCE_DIR}/assets/*")
+
+    foreach(asset ${ASSET_FILES})
+        add_custom_command(TARGET ${target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${asset}" $<TARGET_FILE_DIR:${target}>)
+    endforeach()
 endforeach()
 
 # bring SFML dlls into build folder
