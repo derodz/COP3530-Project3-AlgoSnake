@@ -48,8 +48,6 @@ int main() {
 
   // initial setup
   Game game(42, cell_count, cell_count);
-  game.setAlgorithm(Algorithm::BFS);
-  // game.setAlgorithm(Algorithm::AStar);
 
   UI ui(actual_cell_size, actual_panel_height);
 

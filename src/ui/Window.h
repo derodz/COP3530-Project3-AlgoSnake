@@ -5,36 +5,14 @@
 extern float scale_factor;
 
 class GamePanel {
-  // int CELL_SIZE = 0;
   sf::RectangleShape bg;
-  sf::Font font;
-  sf::Text snakeTypeText;
-  sf::Text statsText;
-  sf::Text elapsedTimeText;
-  sf::Text stepsTakenText;
-  sf::Text avgCompTimeText;
-  sf::RectangleShape statsBg;
-  sf::Texture aStarTexture;
-  sf::Texture bfsTexture;
-  sf::Texture aStarTexture_pressed;
-  sf::Texture bfsTexture_pressed;
-  sf::Sprite spriteAstar;
-  sf::Sprite spriteBFS;
   sf::CircleShape segment;
   sf::CircleShape foodShape;
   sf::RectangleShape bigX[2];
 
 public:
-  GamePanel();
-  GamePanel(float cellSize);
+  GamePanel() { bg.setFillColor(sf::Color::Black); };
   void render(sf::RenderWindow &window, const Game &game, float cellSize);
-  sf::Sprite getAStarSprite() const { return spriteAstar; }
-  sf::Sprite getBFSSprite() const { return spriteBFS; }
-  void pressAStarButton() { spriteAstar.setTexture(aStarTexture_pressed); }
-  void pressBFSButton() { spriteBFS.setTexture(bfsTexture_pressed); }
-  void depressAStarButton() { spriteAstar.setTexture(aStarTexture); }
-  void depressBFSButton() { spriteBFS.setTexture(bfsTexture); }
-  // int getCellSize() const { return CELL_SIZE; }
 };
 
 class StatsPanel {
@@ -47,6 +25,8 @@ class StatsPanel {
   sf::Text avgCompTimeText;
   sf::Texture aStarTexture;
   sf::Texture bfsTexture;
+  sf::Texture aStarTexture_pressed;
+  sf::Texture bfsTexture_pressed;
   sf::Sprite spriteAstar;
   sf::Sprite spriteBFS;
 
@@ -56,6 +36,13 @@ public:
               float panelHeight);
   sf::Sprite getAStarSprite() const { return spriteAstar; }
   sf::Sprite getBFSSprite() const { return spriteBFS; }
+  void pressAStarButton() { spriteAstar.setTexture(aStarTexture_pressed); }
+  void pressBFSButton() { spriteBFS.setTexture(bfsTexture_pressed); }
+  void depressAStarButton() { spriteAstar.setTexture(aStarTexture); }
+  void depressBFSButton() { spriteBFS.setTexture(bfsTexture); }
+
+  enum class ButtonType { None, AStar, BFS };
+  ButtonType pressedButton = ButtonType::None;
 };
 
 class UI {
@@ -66,10 +53,8 @@ class UI {
   float panelHeight;
 
 public:
-  UI(int cellSize) : gamePanel(cellSize) {}
   UI(float cellSize, float panelHeight)
       : cellSize(cellSize), panelHeight(panelHeight) {}
   void render(sf::RenderWindow &window, const Game &game);
   void handleEvent(const sf::Event &event, Game &game);
-  // int getCellSize() const { return gamePanel.getCellSize(); }
 };

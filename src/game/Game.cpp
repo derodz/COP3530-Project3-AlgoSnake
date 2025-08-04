@@ -16,19 +16,20 @@ Game::Game(unsigned seed, int rows, int cols)
 }
 
 void Game::reset(Algorithm newAlgo) {
+  dead = false;
   algo = newAlgo;
-  foodPos = {-1, -1}; // invalid pos to avoid clearing junk on first placeFood
   snake.clear();
-  compTimes.clear();
-  elapsedTime = 0;
-  stepsTaken = 0;
-  snake.push_front({12, 5});
-  snake.push_front({11, 5});
-  snake.push_front({10, 5});
+  snake.push_front({grid.getRows() / 2 + 2, grid.getCols() / 2});
+  snake.push_front({grid.getRows() / 2 + 1, grid.getCols() / 2});
+  snake.push_front({grid.getRows() / 2, grid.getCols() / 2});
+  foodPos = {-1, -1}; // invalid pos to avoid clearing junk on first placeFood
   placeFood();
   startTime = chrono::steady_clock::now();
+  elapsedTime = 0;
+  stepsTaken = 0;
+  compTimes.clear();
+  curDirection = Direction::Up;
   initStatsFile(newAlgo);
-  dead = false;
 }
 
 void Game::placeFood() {
@@ -211,19 +212,4 @@ void Game::saveStats(int foodEaten, int stepsTaken, int elapsedTime,
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
   }
-}
-
-void Game::reset() {
-  dead = false;
-  snake.clear();
-  snake.push_front({grid.getRows() / 2 + 2, grid.getCols() / 2});
-  snake.push_front({grid.getRows() / 2 + 1, grid.getCols() / 2});
-  snake.push_front({grid.getRows() / 2, grid.getCols() / 2});
-  foodPos = {-1, -1}; // Reset to invalid, placeFood() will handle
-  placeFood();
-  startTime = std::chrono::steady_clock::now();
-  elapsedTime = 0;
-  stepsTaken = 0;
-  compTimes.clear();
-  curDirection = Direction::Up;
 }

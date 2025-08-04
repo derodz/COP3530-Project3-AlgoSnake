@@ -10,7 +10,7 @@
 
 using namespace std;
 
-enum class CellType { Empty, Food, Obstacle };
+enum class CellType { Empty, Food };
 enum class Algorithm { None, BFS, AStar };
 enum class Direction { Up, Down, Left, Right };
 
@@ -71,5 +71,4 @@ public:
   Algorithm getAlgorithm() const { return algo; }
   void initStatsFile(Algorithm newAlgo);
   void saveStats(int foodEaten, int stepsTaken, int elapsedTime, int compTime);
-  void reset();
 };

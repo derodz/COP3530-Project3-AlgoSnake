@@ -1,7 +1,5 @@
 #include <Window.h>
 
-GamePanel::GamePanel() { bg.setFillColor(sf::Color::Black); }
-
 void GamePanel::render(sf::RenderWindow &window, const Game &game,
                        float cellSize) {
   float thickness = 20.0f * scale_factor;
@@ -58,8 +56,8 @@ void GamePanel::render(sf::RenderWindow &window, const Game &game,
 }
 
 StatsPanel::StatsPanel() {
-  bg.setFillColor(sf::Color::White);
   font.loadFromFile("arial.ttf");
+  bg.setFillColor(sf::Color::White);
 
   snakeTypeText.setFont(font);
   snakeTypeText.setFillColor(sf::Color::Black);
@@ -77,10 +75,14 @@ StatsPanel::StatsPanel() {
   avgCompTimeText.setFillColor(sf::Color::Black);
 
   aStarTexture.loadFromFile("btn_astar.png");
+  aStarTexture_pressed.loadFromFile("btn_astar_pressed.png");
   spriteAstar.setTexture(aStarTexture);
+  spriteAstar.setPosition(0, 0);
 
   bfsTexture.loadFromFile("btn_bfs.png");
+  bfsTexture_pressed.loadFromFile("btn_bfs_pressed.png");
   spriteBFS.setTexture(bfsTexture);
+  spriteBFS.setPosition(0, 0);
 }
 
 void StatsPanel::render(sf::RenderWindow &window, const Game &game,
@@ -144,6 +146,7 @@ void StatsPanel::render(sf::RenderWindow &window, const Game &game,
                         grid_height_px + btnHeight + 2 * border_margin);
 
   window.draw(bg);
+  window.draw(bg);
   window.draw(snakeTypeText);
   window.draw(statsText);
   window.draw(elapsedTimeText);
@@ -159,7 +162,6 @@ void UI::render(sf::RenderWindow &window, const Game &game) {
 }
 
 void UI::handleEvent(const sf::Event &event, Game &game) {
-  // supports arrow keys or WASD
   bool buttonPressed = false;
   if (event.type == sf::Event::KeyPressed &&
       game.getAlgorithm() == Algorithm::None) {
@@ -184,50 +186,30 @@ void UI::handleEvent(const sf::Event &event, Game &game) {
       break;
     }
   } else if (event.type == sf::Event::MouseButtonPressed) {
-    if (event.mouseButton.button == sf::Mouse::Left) {
-      if (statsPanel.getAStarSprite().getGlobalBounds().contains(
-              event.mouseButton.x, event.mouseButton.y)) {
-        game.setAlgorithm(Algorithm::AStar);
-      } else if (statsPanel.getBFSSprite().getGlobalBounds().contains(
-                     event.mouseButton.x, event.mouseButton.y)) {
-        game.setAlgorithm(Algorithm::BFS);
-      }
-      game.reset();
+    if (statsPanel.getAStarSprite().getGlobalBounds().contains(
+            event.mouseButton.x, event.mouseButton.y)) {
+      buttonPressed = true;
+      statsPanel.pressAStarButton();
+      statsPanel.pressedButton = StatsPanel::ButtonType::AStar;
+      game.reset(Algorithm::AStar);
+    } else if (statsPanel.getBFSSprite().getGlobalBounds().contains(
+                   event.mouseButton.x, event.mouseButton.y)) {
+      buttonPressed = true;
+      statsPanel.pressBFSButton();
+      statsPanel.pressedButton = StatsPanel::ButtonType::BFS;
+      game.reset(Algorithm::BFS);
     }
-  } else if (event.type == sf::Event::MouseButtonPressed) {
-    if (event.mouseButton.button == sf::Mouse::Left &&
-        (game.getAlgorithm() == Algorithm::None || game.isDead())) {
-      if (gamePanel.getAStarSprite().getGlobalBounds().contains(
-              event.mouseButton.x, event.mouseButton.y)) {
-        buttonPressed = true;
-        gamePanel.pressAStarButton();
-        if (game.isDead()) {
-          game.reset(Algorithm::AStar);
-        } else {
-          game.initStatsFile(Algorithm::AStar);
-          game.setAlgorithm(Algorithm::AStar);
-        }
-      } else if (gamePanel.getBFSSprite().getGlobalBounds().contains(
-                     event.mouseButton.x, event.mouseButton.y)) {
-        buttonPressed = true;
-        gamePanel.pressBFSButton();
-        if (game.isDead()) {
-          game.reset(Algorithm::BFS);
-        } else {
-          game.initStatsFile(Algorithm::BFS);
-          game.setAlgorithm(Algorithm::BFS);
-        }
-      }
+  } else if (event.type == sf::Event::MouseButtonReleased) {
+    if (statsPanel.pressedButton == StatsPanel::ButtonType::AStar) {
+      statsPanel.depressAStarButton();
+    } else if (statsPanel.pressedButton == StatsPanel::ButtonType::BFS) {
+      statsPanel.depressBFSButton();
     }
+    statsPanel.pressedButton = StatsPanel::ButtonType::None;
   }
 
   if (!buttonPressed) {
-    gamePanel.depressAStarButton();
-    gamePanel.depressBFSButton();
-  }
-
-  if (!buttonPressed) {
-    gamePanel.depressAStarButton();
-    gamePanel.depressBFSButton();
+    statsPanel.depressAStarButton();
+    statsPanel.depressBFSButton();
   }
 }

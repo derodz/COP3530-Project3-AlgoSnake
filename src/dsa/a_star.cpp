@@ -66,9 +66,6 @@ vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
       // avoid snake body (except tail)
       if (find(snake.begin(), snake.end(), make_pair(ny, nx)) != snake.end())
         continue;
-      // avoid obstacles
-      if (graph.getMatrixNode(ny, nx) == CellType::Obstacle)
-        continue;
 
       double hScore =
           scores[curr.first][curr.second] + 1.0; // uniform cost 1 per step
