@@ -2,7 +2,7 @@
 #include <Game.h>
 #include <SFML/Graphics.hpp>
 
-extern float scale_factor; // Defined in main.cpp
+extern float scale_factor;
 
 class GamePanel {
   sf::RectangleShape bg;
@@ -25,8 +25,6 @@ class StatsPanel {
   sf::Text avgCompTimeText;
   sf::Texture aStarTexture;
   sf::Texture bfsTexture;
-  sf::Texture aStarTexture_pressed;
-  sf::Texture bfsTexture_pressed;
   sf::Sprite spriteAstar;
   sf::Sprite spriteBFS;
 
@@ -49,5 +47,4 @@ public:
   UI(float cellSize, float panelHeight);
   void render(sf::RenderWindow &window, const Game &game);
   void handleEvent(const sf::Event &event, Game &game);
-  void update(const Game &game);
 };

@@ -28,7 +28,6 @@ void GamePanel::render(sf::RenderWindow &window, const Game &game,
   bigX[1].setFillColor(sf::Color::Red);
 
   // draw food
-
   sf::CircleShape foodShape(cellSize / 2.0f);
   foodShape.setFillColor(sf::Color::Red);
   auto food = game.getFoodPos();
@@ -42,7 +41,6 @@ void GamePanel::render(sf::RenderWindow &window, const Game &game,
   }
 
   // draw snake
-
   sf::CircleShape segment(cellSize / 2.0f);
   const auto &snake = game.getSnake();
   if (!snake.empty()) {
@@ -87,7 +85,7 @@ StatsPanel::StatsPanel() {
 
 void StatsPanel::render(sf::RenderWindow &window, const Game &game,
                         float cellSize, float panelHeight) {
-  float char_size = 24.0f * scale_factor; // TODO keep 24px text size?
+  float char_size = 24.0f * scale_factor;
   float border_margin = 10.0f * scale_factor;
 
   float grid_width_px = game.getCols() * cellSize;
@@ -190,16 +188,11 @@ void UI::handleEvent(const sf::Event &event, Game &game) {
     if (event.mouseButton.button == sf::Mouse::Left) {
       if (statsPanel.getAStarSprite().getGlobalBounds().contains(
               event.mouseButton.x, event.mouseButton.y)) {
-        // TODO
-        // game.setAlgorithm(Algorithm::AStar);
+        game.setAlgorithm(Algorithm::AStar);
       } else if (statsPanel.getBFSSprite().getGlobalBounds().contains(
                      event.mouseButton.x, event.mouseButton.y)) {
-        // TODO
-        // game.setAlgorithm(Algorithm::BFS);
+        game.setAlgorithm(Algorithm::BFS);
       }
     }
   }
 }
-
-// TODO
-void UI::update(const Game &game) {}

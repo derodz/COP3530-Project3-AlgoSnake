@@ -61,6 +61,8 @@ int main() {
   cout << "Window size: " << width << "x" << height
        << " (scale: " << scale_factor << ")" << endl;
   cout << "Game starting..." << endl;
+
+	// main game loop
   while (window.isOpen()) {
     sf::Event event;
     while (window.pollEvent(event)) {
