@@ -193,7 +193,7 @@ void UI::handleEvent(const sf::Event &event, Game &game) {
                      event.mouseButton.x, event.mouseButton.y)) {
         game.setAlgorithm(Algorithm::BFS);
       }
-			game.reset();
+      game.reset();
     }
   }
 }

@@ -35,7 +35,6 @@ private:
   Algorithm algo;
 
   bool dead;
-  // vector<pair<int, int>> currentPath;
   Direction curDirection;
 
   // rng related
@@ -69,5 +68,5 @@ public:
   void addCompTime(int time);
   void printStats() { cout << "Foods eaten: " << getFoodsEaten() << endl; };
   Algorithm getAlgorithm() const { return algo; }
-	void reset();
+  void reset();
 };

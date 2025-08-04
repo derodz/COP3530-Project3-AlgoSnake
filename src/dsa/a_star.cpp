@@ -17,7 +17,7 @@ vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
   int cols = graph.getCols();
 
   // A* setup
-	// lambda function for manhattan distance
+  // lambda function for manhattan distance
   auto manhattan = [](pair<int, int> a, pair<int, int> b) {
     return abs(a.first - b.first) + abs(a.second - b.second);
   };
@@ -34,7 +34,7 @@ vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
       rows, vector<double>(cols, numeric_limits<double>::infinity()));
   unordered_map<int, pii> prev;
 
-	// lambda for calculating to position efficiently
+  // lambda for calculating to position efficiently
   auto toKey = [cols](int row, int col) { return row * cols + col; };
 
   scores[start.first][start.second] = 0.0;
@@ -46,7 +46,7 @@ vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
     pq.pop();
     pii curr = currNode.pos;
 
-		// path reconstruction condition
+    // path reconstruction condition
     if (curr == target) {
       vector<pii> path;
       pii pos = target;
