@@ -2,10 +2,20 @@
 #include <Game.h>
 #include <SFML/Graphics.hpp>
 
-const int CELL_SIZE = 20;
+const int CELL_SIZE = 10;
 
-class GamePanel
-{
+class GamePanel {
+  sf::RectangleShape bg;
+  sf::CircleShape segment;
+  sf::CircleShape foodShape;
+  sf::RectangleShape bigX[2];
+
+public:
+  GamePanel();
+  void render(sf::RenderWindow &window, const Game &game);
+};
+
+class StatsPanel {
   sf::RectangleShape bg;
   sf::Font font;
   sf::Text snakeTypeText;
@@ -13,27 +23,23 @@ class GamePanel
   sf::Text elapsedTimeText;
   sf::Text stepsTakenText;
   sf::Text avgCompTimeText;
-  sf::RectangleShape statsBg;
   sf::Texture aStarTexture;
-  sf::Texture bFSTexture;
+  sf::Texture bfsTexture;
   sf::Texture aStarTexture_pressed;
-  sf::Texture bFSTexture_pressed;
+  sf::Texture bfsTexture_pressed;
   sf::Sprite spriteAstar;
   sf::Sprite spriteBFS;
-  sf::CircleShape segment;
-  sf::CircleShape foodShape;
-  sf::RectangleShape bigX[2];
 
 public:
-  GamePanel();
+	StatsPanel();
+	void render(sf::RenderWindow &window, const Game &game);
   sf::Sprite getAStarSprite() const { return spriteAstar; }
   sf::Sprite getBFSSprite() const { return spriteBFS; }
-  void render(sf::RenderWindow &window, const Game &game);
 };
 
-class UI
-{
+class UI {
   GamePanel gamePanel;
+	StatsPanel statsPanel;
 
 public:
   void render(sf::RenderWindow &window, const Game &game);
