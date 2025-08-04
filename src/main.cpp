@@ -6,22 +6,26 @@ using namespace std;
 
 float scale_factor;
 
-int main() {
+int main()
+{
   // read config file
   ifstream configFile("game.config");
-  if (!configFile.is_open()) {
+  if (!configFile.is_open())
+  {
     throw runtime_error("Failed to open game.config");
   }
 
   int cell_count = 0;
   configFile >> cell_count;
-  if (cell_count == 0) {
+  if (cell_count == 0)
+  {
     throw runtime_error("Invalid row count in game.config");
   }
 
   int frame_rate = 0;
   configFile >> frame_rate;
-  if (frame_rate == 0) {
+  if (frame_rate == 0)
+  {
     throw runtime_error("Invalid frame rate in game.config");
   }
 
@@ -63,16 +67,20 @@ int main() {
   cout << "Game starting..." << endl;
 
   // main game loop
-  while (window.isOpen()) {
+  while (window.isOpen())
+  {
     sf::Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
+    while (window.pollEvent(event))
+    {
+      if (event.type == sf::Event::Closed)
+      {
         window.close();
       }
       ui.handleEvent(event, game);
     }
 
-    if (game.getAlgorithm() != Algorithm::None) {
+    if (game.getAlgorithm() != Algorithm::None)
+    {
       game.update();
     }
 

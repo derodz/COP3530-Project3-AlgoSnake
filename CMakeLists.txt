@@ -13,8 +13,10 @@ FetchContent_Declare(
     GIT_TAG v3.5.2 # if you run into issues, try updating your editor or downgrading to a lower version of catch v3
 )
 FetchContent_MakeAvailable(Catch2)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
 SET(SFML_DIR "C:/SFML-2.6.2-x64/lib/cmake/SFML")
-SET(SFML_INCLUDE_DIRS "C:/SFML-2.6.2-x64/bin")
+link_directories("C:/SFML-2.6.2-x64/lib")
+set(SFML_STATIC_LIBRARIES TRUE)
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
 
 add_subdirectory(src/game)
@@ -25,8 +27,22 @@ add_executable(Main src/main.cpp)
 add_executable(Tests test/test.cpp)
 add_executable(Sim src/sim.cpp)
 
-target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain)
-target_link_libraries(Main PUBLIC game ui dsa sfml-graphics sfml-window sfml-system)
+target_compile_definitions(Main PRIVATE SFML_STATIC)
+target_compile_definitions(Tests PRIVATE SFML_STATIC)
+
+set(SFML_STATIC_LIBS
+    sfml-graphics-s
+    sfml-window-s
+    sfml-system-s
+    freetype
+    opengl32
+    winmm
+    gdi32
+    user32
+)
+
+target_link_libraries(Main PUBLIC game ui dsa ${SFML_STATIC_LIBS})
+target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain ${SFML_STATIC_LIBS})
 target_link_libraries(Sim PUBLIC game dsa)
 
 # comment everything below out if you are using CLion
@@ -46,24 +62,5 @@ foreach(target Main Tests)
             "${asset}" $<TARGET_FILE_DIR:${target}>)
     endforeach()
 endforeach()
-
-# bring SFML dlls into build folder
-if(WIN32)
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        file(GLOB SFML_DLLS "C:/SFML-2.6.2-x64/bin/*-d-2.dll")
-    else()
-        file(GLOB SFML_DLLS "C:/SFML-2.6.2-x64/bin/sfml-*-2.dll")
-    endif()
-
-    foreach(DLL ${SFML_DLLS})
-        add_custom_command(TARGET Main POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${DLL}" $<TARGET_FILE_DIR:Main>)
-
-        add_custom_command(TARGET Tests POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${DLL}" $<TARGET_FILE_DIR:Tests>)
-    endforeach()
-endif()
 
 catch_discover_tests(Tests)
