@@ -23,6 +23,8 @@ class StatsPanel {
   sf::Text elapsedTimeText;
   sf::Text stepsTakenText;
   sf::Text avgCompTimeText;
+  sf::Text avgNodesExploredText;
+  sf::Text failureDistanceText;
   sf::Texture aStarTexture;
   sf::Texture bfsTexture;
   sf::Texture aStarTexture_pressed;

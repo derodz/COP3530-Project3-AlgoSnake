@@ -7,9 +7,9 @@
 
 using namespace std;
 
-vector<pair<int, int>> bfsGetPath(const Graph<CellType> &graph,
-                                  const deque<pair<int, int>> &snake,
-                                  pair<int, int> start, pair<int, int> target) {
+std::pair<vector<pair<int, int>>, int>
+bfsGetPath(const Graph<CellType> &graph, const deque<pair<int, int>> &snake,
+           pair<int, int> start, pair<int, int> target) {
   int rows = graph.getRows();
   int cols = graph.getCols();
 
@@ -25,10 +25,12 @@ vector<pair<int, int>> bfsGetPath(const Graph<CellType> &graph,
   visited[start.first][start.second] = true;
   prev[toKey(start.first, start.second)] = {-1, -1};
 
+  int expanded = 0;
   bool found = false;
   while (!q.empty()) {
     auto curr = q.front();
     q.pop();
+    expanded++;
 
     if (curr == target) {
       found = true;
@@ -53,7 +55,7 @@ vector<pair<int, int>> bfsGetPath(const Graph<CellType> &graph,
   }
 
   if (!found)
-    return {};
+    return {{}, expanded};
 
   // reconstruct path
   vector<pair<int, int>> path;
@@ -63,5 +65,5 @@ vector<pair<int, int>> bfsGetPath(const Graph<CellType> &graph,
     curr = prev[toKey(curr.first, curr.second)];
   }
   reverse(path.begin(), path.end());
-  return path;
+  return {path, expanded};
 }

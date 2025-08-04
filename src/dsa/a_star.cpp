@@ -9,10 +9,9 @@
 
 using namespace std;
 
-vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
-                                    const deque<pair<int, int>> &snake,
-                                    pair<int, int> start,
-                                    pair<int, int> target) {
+std::pair<vector<pair<int, int>>, int>
+aStarGetPath(const Graph<CellType> &graph, const deque<pair<int, int>> &snake,
+             pair<int, int> start, pair<int, int> target) {
   int rows = graph.getRows();
   int cols = graph.getCols();
 
@@ -41,9 +40,12 @@ vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
   double fInit = manhattan(start, target);
   pq.push({start, fInit});
 
+  int expanded = 0;
+
   while (!pq.empty()) {
     auto currNode = pq.top();
     pq.pop();
+    expanded++;
     pii curr = currNode.pos;
 
     // path reconstruction condition
@@ -55,7 +57,7 @@ vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
         pos = prev[toKey(pos.first, pos.second)];
       }
       reverse(path.begin(), path.end());
-      return path;
+      return {path, expanded};
     }
 
     auto neighbors = graph.getNodeNeighbors(curr.first, curr.second);
@@ -78,5 +80,5 @@ vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
       }
     }
   }
-  return {};
+  return {{}, expanded};
 }

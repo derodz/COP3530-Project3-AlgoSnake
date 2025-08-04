@@ -74,6 +74,12 @@ StatsPanel::StatsPanel() {
   avgCompTimeText.setFont(font);
   avgCompTimeText.setFillColor(sf::Color::Black);
 
+  avgNodesExploredText.setFont(font);
+  avgNodesExploredText.setFillColor(sf::Color::Black);
+
+  failureDistanceText.setFont(font);
+  failureDistanceText.setFillColor(sf::Color::Black);
+
   aStarTexture.loadFromFile("btn_astar.png");
   aStarTexture_pressed.loadFromFile("btn_astar_pressed.png");
   spriteAstar.setTexture(aStarTexture);
@@ -103,6 +109,8 @@ void StatsPanel::render(sf::RenderWindow &window, const Game &game,
   elapsedTimeText.setCharacterSize(static_cast<unsigned int>(char_size));
   stepsTakenText.setCharacterSize(static_cast<unsigned int>(char_size));
   avgCompTimeText.setCharacterSize(static_cast<unsigned int>(char_size));
+  avgNodesExploredText.setCharacterSize(static_cast<unsigned int>(char_size));
+  failureDistanceText.setCharacterSize(static_cast<unsigned int>(char_size));
 
   // set string text and initial positions
   float text_height = snakeTypeText.getGlobalBounds().height;
@@ -131,9 +139,20 @@ void StatsPanel::render(sf::RenderWindow &window, const Game &game,
                                                 4 * border_margin);
 
   avgCompTimeText.setString(
-      "Avg Computation Time: " + std::to_string(game.getAvgCompTime()) + " ns");
+      "Avg Computation Time: " + std::to_string(game.getAvgCompTime()) + " us");
   avgCompTimeText.setPosition(border_margin, grid_height_px + 4 * text_height +
                                                  5 * border_margin);
+
+  avgNodesExploredText.setString("Avg Nodes Explored: " +
+                                 std::to_string(game.getAvgNodesExplored()));
+  avgNodesExploredText.setPosition(
+      border_margin, grid_height_px + 5 * text_height + 6 * border_margin);
+
+  std::string failStr =
+      game.isDead() ? std::to_string(game.getFailureDistance()) : "N/A";
+  failureDistanceText.setString("Failure Distance: " + failStr);
+  failureDistanceText.setPosition(
+      border_margin, grid_height_px + 6 * text_height + 7 * border_margin);
 
   // button scale and placement
   spriteAstar.setScale(scale_factor, scale_factor);
@@ -146,12 +165,13 @@ void StatsPanel::render(sf::RenderWindow &window, const Game &game,
                         grid_height_px + btnHeight + 2 * border_margin);
 
   window.draw(bg);
-  window.draw(bg);
   window.draw(snakeTypeText);
   window.draw(statsText);
   window.draw(elapsedTimeText);
   window.draw(stepsTakenText);
   window.draw(avgCompTimeText);
+  window.draw(avgNodesExploredText);
+  window.draw(failureDistanceText);
   window.draw(spriteAstar);
   window.draw(spriteBFS);
 }

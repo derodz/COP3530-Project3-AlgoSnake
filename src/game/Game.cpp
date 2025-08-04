@@ -13,6 +13,8 @@ Game::Game(unsigned seed, int rows, int cols)
   snake.push_front({grid.getRows() / 2 + 1, grid.getCols() / 2});
   snake.push_front({grid.getRows() / 2, grid.getCols() / 2});
   placeFood();
+  failureDistance = -1;
+  savedSummary = true; // initial no save needed
 }
 
 void Game::reset(Algorithm newAlgo) {
@@ -28,7 +30,11 @@ void Game::reset(Algorithm newAlgo) {
   elapsedTime = 0;
   stepsTaken = 0;
   compTimes.clear();
+  nodesExplored.clear();
+  perCallStats.clear();
   curDirection = Direction::Up;
+  failureDistance = -1;
+  savedSummary = false;
   initStatsFile(newAlgo);
 }
 
@@ -49,21 +55,21 @@ void Game::placeFood() {
   grid.setMatrixNode(foodPos.first, foodPos.second, CellType::Food);
 }
 
-vector<pair<int, int>> Game::findPath(pair<int, int> target) {
+std::pair<vector<pair<int, int>>, int> Game::findPath(pair<int, int> target) {
   auto head = snake.front();
   auto start = chrono::steady_clock::now();
-  vector<pair<int, int>> path;
+  std::pair<vector<pair<int, int>>, int> result;
   if (algo == Algorithm::BFS) {
-    path = bfsGetPath(grid, snake, head, target);
+    result = bfsGetPath(grid, snake, head, target);
   } else {
-    path = aStarGetPath(grid, snake, head, target);
+    result = aStarGetPath(grid, snake, head, target);
   }
   auto end = chrono::steady_clock::now();
-  int compTime =
-      chrono::duration_cast<chrono::milliseconds>(end - start).count();
+  long long compTime =
+      chrono::duration_cast<chrono::microseconds>(end - start).count();
   addCompTime(compTime);
 
-  return path;
+  return result;
 }
 
 void Game::update() {
@@ -73,22 +79,28 @@ void Game::update() {
   calculateElapsedTime();
 
   auto head = snake.front();
-  auto path = findPath(foodPos);
+  auto result = findPath(foodPos);
+  auto path = result.first;
+  auto nodes = result.second;
+  addNodesExplored(nodes);
   if (path.empty()) {
     // this condition falls back to chasing the tail
     auto tail = snake.back();
     deque<pair<int, int>> tempSnake = snake;
     tempSnake.pop_back();
     auto start = chrono::steady_clock::now();
+    std::pair<vector<pair<int, int>>, int> tailResult;
     if (algo == Algorithm::BFS) {
-      path = bfsGetPath(grid, tempSnake, head, tail);
+      tailResult = bfsGetPath(grid, tempSnake, head, tail);
     } else {
-      path = aStarGetPath(grid, tempSnake, head, tail);
+      tailResult = aStarGetPath(grid, tempSnake, head, tail);
     }
     auto end = chrono::steady_clock::now();
-    int compTime =
-        chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    long long compTime =
+        chrono::duration_cast<chrono::microseconds>(end - start).count();
     addCompTime(compTime);
+    addNodesExplored(tailResult.second);
+    path = tailResult.first;
 
     if (path.empty()) {
       // no current path found, try continuing in the current direction
@@ -97,17 +109,23 @@ void Game::update() {
       int up = head.first + 1;
       int left = head.second - 1;
       int down = head.first - 1;
-      if (right < grid.getCols() - 1 && right != (*startOfSnakeBody).second) {
+      if (right < grid.getCols() && right != (*startOfSnakeBody).second) {
         path.push_back({head.first, right});
       } else if (left >= 0 && left != (*startOfSnakeBody).second) {
         path.push_back({head.first, left});
-      } else if (up < grid.getRows() - 1 && up != (*startOfSnakeBody).first) {
+      } else if (up < grid.getRows() && up != (*startOfSnakeBody).first) {
         path.push_back({up, head.second});
       } else if (down >= 0 && down != (*startOfSnakeBody).first) {
         path.push_back({down, head.second});
       } else {
         // no valid moves left, game over
         dead = true;
+        failureDistance = std::abs(head.first - foodPos.first) +
+                          std::abs(head.second - foodPos.second);
+        if (!savedSummary) {
+          saveSummary();
+          savedSummary = true;
+        }
         return;
       }
     }
@@ -121,6 +139,12 @@ void Game::update() {
       newHead.second >= cols) {
     // hit wall
     dead = true;
+    failureDistance = std::abs(head.first - foodPos.first) +
+                      std::abs(head.second - foodPos.second);
+    if (!savedSummary) {
+      saveSummary();
+      savedSummary = true;
+    }
     return;
   }
 
@@ -140,6 +164,12 @@ void Game::update() {
   for (auto it = next(snake.begin()); it != snake.end(); ++it) {
     if (*it == head) {
       dead = true;
+      failureDistance = std::abs(head.first - foodPos.first) +
+                        std::abs(head.second - foodPos.second);
+      if (!savedSummary) {
+        saveSummary();
+        savedSummary = true;
+      }
       break;
     }
   }
@@ -162,54 +192,118 @@ void Game::calculateElapsedTime() {
   elapsedTime = chrono::duration_cast<chrono::seconds>(now - startTime).count();
 }
 
-int Game::getAvgCompTime() const {
-  if (compTimes.empty() || !isDead())
+long long Game::getAvgCompTime() const {
+  if (compTimes.empty())
     return 0;
-  int sum = 0;
-  for (int t : compTimes) {
+  long long sum = 0;
+  for (long long t : compTimes) {
     sum += t;
   }
   return sum / compTimes.size();
 }
 
-void Game::addCompTime(int time) {
-  compTimes.push_back(time);
-  saveStats(getFoodsEaten(), getStepsTaken(), getElapsedTime(), time);
+int Game::getAvgNodesExplored() const {
+  if (nodesExplored.empty())
+    return 0;
+  long long sum = 0;
+  for (int n : nodesExplored) {
+    sum += n;
+  }
+  return static_cast<int>(sum / nodesExplored.size());
+}
+
+void Game::addCompTime(long long time) { compTimes.push_back(time); }
+
+void Game::addNodesExplored(int nodes) {
+  nodesExplored.push_back(nodes);
+  perCallStats.push_back({getFoodsEaten(), getStepsTaken(), getElapsedTime(),
+                          compTimes.back(), nodes});
 }
 
 void Game::initStatsFile(Algorithm newAlgo) {
   try {
     string algoName = (newAlgo == Algorithm::AStar) ? "AStar" : "BFS";
     string filename = algoName + "_stats.csv";
+
+    bool need_header = true;
+    {
+      std::ifstream check(filename);
+      if (check.good()) {
+        check.seekg(0, std::ios::end);
+        if (check.tellg() > 0) {
+          need_header = false;
+        }
+      }
+    }
+
     ofstream file(filename, ios::app);
     if (!file.is_open()) {
       cerr << "Failed to open " << filename << endl;
       return;
     }
 
-    file << "Food Eaten, Steps Taken, Elapsed Time (s), Comp Time (ns)\n";
+    if (need_header) {
+      file << "Food Eaten,Steps Taken,Elapsed Time (s),Comp Time (us),Nodes "
+              "Explored\n";
+    }
     file.close();
   } catch (const std::exception &e) {
     cerr << e.what() << '\n';
   }
 }
 
-void Game::saveStats(int foodEaten, int stepsTaken, int elapsedTime,
-                     int compTime) {
+void Game::saveSummary() {
+  if (savedSummary)
+    return;
   try {
-    string algoName = (algo == Algorithm::AStar) ? "AStar" : "BFS";
-    string filename = algoName + "_stats.csv";
-    ofstream file(filename, ios::app);
+    string filename = "summary_stats.csv";
 
+    bool need_header = true;
+    {
+      std::ifstream check(filename);
+      if (check.good()) {
+        check.seekg(0, std::ios::end);
+        if (check.tellg() > 0) {
+          need_header = false;
+        }
+      }
+    }
+
+    ofstream file(filename, ios::app);
     if (!file.is_open()) {
       cerr << "Failed to open " << filename << endl;
       return;
     }
 
-    file << foodEaten << ", " << stepsTaken << ", " << elapsedTime << ", "
-         << compTime << "\n";
+    if (need_header) {
+      file << "Algorithm,Food Eaten,Steps Taken,Elapsed Time (s),Avg Comp Time "
+              "(us),Avg Nodes Explored,Failure Distance\n";
+    }
+
+    string algoName = (algo == Algorithm::AStar) ? "AStar" : "BFS";
+    file << algoName << "," << getFoodsEaten() << "," << getStepsTaken() << ","
+         << getElapsedTime() << "," << getAvgCompTime() << ","
+         << getAvgNodesExplored() << "," << getFailureDistance() << "\n";
     file.close();
+
+    // Now write the per-call stats
+    string perCallFilename =
+        (algo == Algorithm::AStar) ? "AStar_stats.csv" : "BFS_stats.csv";
+    ofstream perCallFile(perCallFilename, ios::app);
+    if (!perCallFile.is_open()) {
+      cerr << "Failed to open " << perCallFilename << endl;
+      return;
+    }
+
+    for (const auto &stat : perCallStats) {
+      perCallFile << stat.foodEaten << "," << stat.stepsTaken << ","
+                  << stat.elapsedTime << "," << stat.compTime << ","
+                  << stat.nodesExplored << "\n";
+    }
+    perCallFile.close();
+
+    savedSummary = true;
   } catch (const std::exception &e) {
-    std::cerr << e.what() << '\n';
+    cerr << e.what() << '\n';
   }
 }

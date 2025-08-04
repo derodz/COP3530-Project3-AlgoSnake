@@ -15,13 +15,20 @@ enum class Algorithm { None, BFS, AStar };
 enum class Direction { Up, Down, Left, Right };
 
 // forward declarations
-vector<pair<int, int>> bfsGetPath(const Graph<CellType> &graph,
-                                  const deque<pair<int, int>> &snake,
-                                  pair<int, int> start, pair<int, int> target);
-vector<pair<int, int>> aStarGetPath(const Graph<CellType> &graph,
-                                    const deque<pair<int, int>> &snake,
-                                    pair<int, int> start,
-                                    pair<int, int> target);
+std::pair<vector<pair<int, int>>, int>
+bfsGetPath(const Graph<CellType> &graph, const deque<pair<int, int>> &snake,
+           pair<int, int> start, pair<int, int> target);
+std::pair<vector<pair<int, int>>, int>
+aStarGetPath(const Graph<CellType> &graph, const deque<pair<int, int>> &snake,
+             pair<int, int> start, pair<int, int> target);
+
+struct PerCallStat {
+  int foodEaten;
+  int stepsTaken;
+  int elapsedTime;
+  long long compTime;
+  int nodesExplored;
+};
 
 class Game {
 private:
@@ -31,11 +38,15 @@ private:
   chrono::_V2::steady_clock::time_point startTime = chrono::steady_clock::now();
   int elapsedTime = 0; // in seconds
   int stepsTaken = 0;
-  vector<int> compTimes; // in nanoseconds
+  vector<long long> compTimes; // in microseconds
+  vector<int> nodesExplored;
+  vector<PerCallStat> perCallStats;
   Algorithm algo;
 
   bool dead;
   Direction curDirection;
+  int failureDistance;
+  bool savedSummary;
 
   // rng related
   std::mt19937 rng;
@@ -43,7 +54,7 @@ private:
   std::uniform_int_distribution<int> colDist;
 
   void placeFood();
-  vector<pair<int, int>> findPath(pair<int, int> target);
+  std::pair<vector<pair<int, int>>, int> findPath(pair<int, int> target);
 
 public:
   Game(unsigned seed, int rows, int cols);
@@ -65,10 +76,13 @@ public:
   void incrementStepsTaken() { stepsTaken++; };
   int getStepsTaken() const { return stepsTaken; };
   int getElapsedTime() const { return elapsedTime; };
-  int getAvgCompTime() const;
-  void addCompTime(int time);
+  long long getAvgCompTime() const;
+  int getAvgNodesExplored() const;
+  int getFailureDistance() const { return failureDistance; }
+  void addCompTime(long long time);
+  void addNodesExplored(int nodes);
   void printStats() { cout << "Foods eaten: " << getFoodsEaten() << endl; };
   Algorithm getAlgorithm() const { return algo; }
   void initStatsFile(Algorithm newAlgo);
-  void saveStats(int foodEaten, int stepsTaken, int elapsedTime, int compTime);
+  void saveSummary();
 };
