@@ -76,10 +76,10 @@ StatsPanel::StatsPanel() {
   avgCompTimeText.setFont(font);
   avgCompTimeText.setFillColor(sf::Color::Black);
 
-  aStarTexture.loadFromFile("btn_astar.jpg");
+  aStarTexture.loadFromFile("btn_astar.png");
   spriteAstar.setTexture(aStarTexture);
 
-  bfsTexture.loadFromFile("btn_bfs.jpg");
+  bfsTexture.loadFromFile("btn_bfs.png");
   spriteBFS.setTexture(bfsTexture);
 }
 
