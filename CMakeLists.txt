@@ -23,9 +23,11 @@ add_subdirectory(src/dsa)
 
 add_executable(Main src/main.cpp)
 add_executable(Tests test/test.cpp)
+add_executable(Sim src/sim.cpp)
 
 target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain)
 target_link_libraries(Main PUBLIC game ui dsa sfml-graphics sfml-window sfml-system)
+target_link_libraries(Sim PUBLIC game dsa)
 
 # comment everything below out if you are using CLion
 include(CTest)
