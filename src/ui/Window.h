@@ -2,7 +2,7 @@
 #include <Game.h>
 #include <SFML/Graphics.hpp>
 
-const int CELL_SIZE = 10;
+extern float scale_factor; // Defined in main.cpp
 
 class GamePanel {
   sf::RectangleShape bg;
@@ -31,15 +31,15 @@ class StatsPanel {
   sf::Sprite spriteBFS;
 
 public:
-	StatsPanel();
-	void render(sf::RenderWindow &window, const Game &game);
+  StatsPanel();
+  void render(sf::RenderWindow &window, const Game &game);
   sf::Sprite getAStarSprite() const { return spriteAstar; }
   sf::Sprite getBFSSprite() const { return spriteBFS; }
 };
 
 class UI {
   GamePanel gamePanel;
-	StatsPanel statsPanel;
+  StatsPanel statsPanel;
 
 public:
   void render(sf::RenderWindow &window, const Game &game);
