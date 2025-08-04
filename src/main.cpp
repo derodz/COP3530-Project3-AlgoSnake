@@ -62,7 +62,7 @@ int main() {
        << " (scale: " << scale_factor << ")" << endl;
   cout << "Game starting..." << endl;
 
-	// main game loop
+  // main game loop
   while (window.isOpen()) {
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -72,7 +72,9 @@ int main() {
       ui.handleEvent(event, game);
     }
 
-    game.update();
+    if (game.getAlgorithm() != Algorithm::None) {
+      game.update();
+    }
 
     window.clear();
     ui.render(window, game);

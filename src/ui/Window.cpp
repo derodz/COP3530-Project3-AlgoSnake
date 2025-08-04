@@ -153,9 +153,6 @@ void StatsPanel::render(sf::RenderWindow &window, const Game &game,
   window.draw(spriteBFS);
 }
 
-UI::UI(float cellSize, float panelHeight)
-    : cellSize(cellSize), panelHeight(panelHeight) {}
-
 void UI::render(sf::RenderWindow &window, const Game &game) {
   gamePanel.render(window, game, cellSize);
   statsPanel.render(window, game, cellSize, panelHeight);
@@ -163,7 +160,9 @@ void UI::render(sf::RenderWindow &window, const Game &game) {
 
 void UI::handleEvent(const sf::Event &event, Game &game) {
   // supports arrow keys or WASD
-  if (event.type == sf::Event::KeyPressed) {
+  bool buttonPressed = false;
+  if (event.type == sf::Event::KeyPressed &&
+      game.getAlgorithm() == Algorithm::None) {
     switch (event.key.code) {
     case sf::Keyboard::Up:
     case sf::Keyboard::W:
@@ -195,5 +194,40 @@ void UI::handleEvent(const sf::Event &event, Game &game) {
       }
       game.reset();
     }
+  } else if (event.type == sf::Event::MouseButtonPressed) {
+    if (event.mouseButton.button == sf::Mouse::Left &&
+        (game.getAlgorithm() == Algorithm::None || game.isDead())) {
+      if (gamePanel.getAStarSprite().getGlobalBounds().contains(
+              event.mouseButton.x, event.mouseButton.y)) {
+        buttonPressed = true;
+        gamePanel.pressAStarButton();
+        if (game.isDead()) {
+          game.reset(Algorithm::AStar);
+        } else {
+          game.initStatsFile(Algorithm::AStar);
+          game.setAlgorithm(Algorithm::AStar);
+        }
+      } else if (gamePanel.getBFSSprite().getGlobalBounds().contains(
+                     event.mouseButton.x, event.mouseButton.y)) {
+        buttonPressed = true;
+        gamePanel.pressBFSButton();
+        if (game.isDead()) {
+          game.reset(Algorithm::BFS);
+        } else {
+          game.initStatsFile(Algorithm::BFS);
+          game.setAlgorithm(Algorithm::BFS);
+        }
+      }
+    }
+  }
+
+  if (!buttonPressed) {
+    gamePanel.depressAStarButton();
+    gamePanel.depressBFSButton();
+  }
+
+  if (!buttonPressed) {
+    gamePanel.depressAStarButton();
+    gamePanel.depressBFSButton();
   }
 }

@@ -1,14 +1,34 @@
 #include <Game.h>
 #include <algorithm>
+#include <chrono>
+#include <fstream>
+#include <iostream>
 
 Game::Game(unsigned seed, int rows, int cols)
     : grid(rows, cols), curDirection(Direction::Up), dead(false), rng(seed),
       rowDist(0, grid.getRows() - 1), colDist(0, grid.getCols() - 1) {
+  algo = Algorithm::None;
   foodPos = {-1, -1}; // invalid pos to avoid clearing junk on first placeFood
   snake.push_front({grid.getRows() / 2 + 2, grid.getCols() / 2});
   snake.push_front({grid.getRows() / 2 + 1, grid.getCols() / 2});
   snake.push_front({grid.getRows() / 2, grid.getCols() / 2});
   placeFood();
+}
+
+void Game::reset(Algorithm newAlgo) {
+  algo = newAlgo;
+  foodPos = {-1, -1}; // invalid pos to avoid clearing junk on first placeFood
+  snake.clear();
+  compTimes.clear();
+  elapsedTime = 0;
+  stepsTaken = 0;
+  snake.push_front({12, 5});
+  snake.push_front({11, 5});
+  snake.push_front({10, 5});
+  placeFood();
+  startTime = chrono::steady_clock::now();
+  initStatsFile(newAlgo);
+  dead = false;
 }
 
 void Game::placeFood() {
@@ -142,7 +162,7 @@ void Game::calculateElapsedTime() {
 }
 
 int Game::getAvgCompTime() const {
-  if (compTimes.empty())
+  if (compTimes.empty() || !isDead())
     return 0;
   int sum = 0;
   for (int t : compTimes) {
@@ -151,7 +171,47 @@ int Game::getAvgCompTime() const {
   return sum / compTimes.size();
 }
 
-void Game::addCompTime(int time) { compTimes.push_back(time); }
+void Game::addCompTime(int time) {
+  compTimes.push_back(time);
+  saveStats(getFoodsEaten(), getStepsTaken(), getElapsedTime(), time);
+}
+
+void Game::initStatsFile(Algorithm newAlgo) {
+  try {
+    string algoName = (newAlgo == Algorithm::AStar) ? "AStar" : "BFS";
+    string filename = algoName + "_stats.csv";
+    ofstream file(filename, ios::app);
+    if (!file.is_open()) {
+      cerr << "Failed to open " << filename << endl;
+      return;
+    }
+
+    file << "Food Eaten, Steps Taken, Elapsed Time (s), Comp Time (ns)\n";
+    file.close();
+  } catch (const std::exception &e) {
+    cerr << e.what() << '\n';
+  }
+}
+
+void Game::saveStats(int foodEaten, int stepsTaken, int elapsedTime,
+                     int compTime) {
+  try {
+    string algoName = (algo == Algorithm::AStar) ? "AStar" : "BFS";
+    string filename = algoName + "_stats.csv";
+    ofstream file(filename, ios::app);
+
+    if (!file.is_open()) {
+      cerr << "Failed to open " << filename << endl;
+      return;
+    }
+
+    file << foodEaten << ", " << stepsTaken << ", " << elapsedTime << ", "
+         << compTime << "\n";
+    file.close();
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << '\n';
+  }
+}
 
 void Game::reset() {
   dead = false;
