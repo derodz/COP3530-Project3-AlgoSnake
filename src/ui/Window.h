@@ -12,7 +12,7 @@ class GamePanel {
 
 public:
   GamePanel();
-  void render(sf::RenderWindow &window, const Game &game);
+  void render(sf::RenderWindow &window, const Game &game, float cellSize);
 };
 
 class StatsPanel {
@@ -32,7 +32,8 @@ class StatsPanel {
 
 public:
   StatsPanel();
-  void render(sf::RenderWindow &window, const Game &game);
+  void render(sf::RenderWindow &window, const Game &game, float cellSize,
+              float panelHeight);
   sf::Sprite getAStarSprite() const { return spriteAstar; }
   sf::Sprite getBFSSprite() const { return spriteBFS; }
 };
@@ -41,7 +42,11 @@ class UI {
   GamePanel gamePanel;
   StatsPanel statsPanel;
 
+  float cellSize;
+  float panelHeight;
+
 public:
+  UI(float cellSize, float panelHeight);
   void render(sf::RenderWindow &window, const Game &game);
   void handleEvent(const sf::Event &event, Game &game);
   void update(const Game &game);
