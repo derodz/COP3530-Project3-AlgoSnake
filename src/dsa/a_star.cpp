@@ -66,11 +66,22 @@ aStarGetPath(const Graph<CellType> &graph, const deque<pair<int, int>> &snake,
       if (ny < 0 || ny >= rows || nx < 0 || nx >= cols)
         continue;
       // avoid snake body (except tail)
-      if (find(snake.begin(), snake.end(), make_pair(ny, nx)) != snake.end())
+      if (find(snake.begin(), snake.end(), nei) != snake.end() && nei != target)
         continue;
 
-      double hScore =
-          scores[curr.first][curr.second] + 1.0; // uniform cost 1 per step
+      double hScore = scores[curr.first][curr.second] + 1.0;
+      double epsilon = 1.4; // TUNE: detour penalty i like
+      bool near_body = false;
+      auto nei_neighbors = graph.getNodeNeighbors(ny, nx);
+      for (const auto &nn : nei_neighbors) {
+        if (find(snake.begin(), snake.end(), nn) != snake.end()) {
+          near_body = true;
+          break;
+        }
+      }
+      if (near_body)
+        hScore += epsilon;
+
       if (hScore < scores[ny][nx]) {
         prev[toKey(ny, nx)] = curr;
         scores[ny][nx] = hScore;

@@ -6,17 +6,22 @@ set(CMAKE_CXX_STANDARD 14)
 set(GCC_COVERAGE_COMPILE_FLAGS "-Werror -Wuninitialized")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 
-Include(FetchContent)
+include(FetchContent)
 FetchContent_Declare(
     Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
     GIT_TAG v3.5.2 # if you run into issues, try updating your editor or downgrading to a lower version of catch v3
 )
 FetchContent_MakeAvailable(Catch2)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
-SET(SFML_DIR "C:/SFML-2.6.2-x64/lib/cmake/SFML")
-link_directories("C:/SFML-2.6.2-x64/lib")
-set(SFML_STATIC_LIBRARIES TRUE)
+
+if(WIN32)
+    # windows-specific setup: Use static SFML with hardcoded paths
+    set(SFML_DIR "C:/SFML-2.6.2-x64/lib/cmake/SFML")
+    link_directories("C:/SFML-2.6.2-x64/lib")
+    set(SFML_STATIC_LIBRARIES TRUE)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+endif()
+
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
 
 add_subdirectory(src/game)
@@ -27,23 +32,31 @@ add_executable(Main src/main.cpp)
 add_executable(Tests test/test.cpp)
 add_executable(Sim src/sim.cpp)
 
-target_compile_definitions(Main PRIVATE SFML_STATIC)
-target_compile_definitions(Tests PRIVATE SFML_STATIC)
+if(WIN32)
+    # windows: Static definitions and manual static lib linking
+    target_compile_definitions(Main PRIVATE SFML_STATIC)
+    target_compile_definitions(Tests PRIVATE SFML_STATIC)
 
-set(SFML_STATIC_LIBS
-    sfml-graphics-s
-    sfml-window-s
-    sfml-system-s
-    freetype
-    opengl32
-    winmm
-    gdi32
-    user32
-)
+    set(SFML_STATIC_LIBS
+        sfml-graphics-s
+        sfml-window-s
+        sfml-system-s
+        freetype
+        opengl32
+        winmm
+        gdi32
+        user32
+    )
 
-target_link_libraries(Main PUBLIC game ui dsa ${SFML_STATIC_LIBS})
-target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain ${SFML_STATIC_LIBS})
-target_link_libraries(Sim PUBLIC game dsa)
+    target_link_libraries(Main PUBLIC game ui dsa ${SFML_STATIC_LIBS})
+    target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain ${SFML_STATIC_LIBS})
+    target_link_libraries(Sim PUBLIC game dsa)  # Sim doesn't need SFML
+else()
+    # unix based: use cmake imported targets for shared linking (handles deps automatically)
+    target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain)
+    target_link_libraries(Main PUBLIC game ui dsa sfml-graphics sfml-window sfml-system)
+    target_link_libraries(Sim PUBLIC game dsa)
+endif()
 
 # comment everything below out if you are using CLion
 include(CTest)

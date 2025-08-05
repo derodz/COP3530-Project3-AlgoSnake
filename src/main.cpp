@@ -51,7 +51,9 @@ int main()
       static_cast<int>(cell_count * actual_cell_size + actual_panel_height);
 
   // initial setup
-  Game game(42, cell_count, cell_count);
+	// unsigned seed = 42;
+	unsigned seed = 9001;
+  Game game(seed, cell_count, cell_count);
 
   UI ui(actual_cell_size, actual_panel_height);
 

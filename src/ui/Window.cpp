@@ -183,29 +183,7 @@ void UI::render(sf::RenderWindow &window, const Game &game) {
 
 void UI::handleEvent(const sf::Event &event, Game &game) {
   bool buttonPressed = false;
-  if (event.type == sf::Event::KeyPressed &&
-      game.getAlgorithm() == Algorithm::None) {
-    switch (event.key.code) {
-    case sf::Keyboard::Up:
-    case sf::Keyboard::W:
-      game.setDirection(Direction::Up);
-      break;
-    case sf::Keyboard::Down:
-    case sf::Keyboard::S:
-      game.setDirection(Direction::Down);
-      break;
-    case sf::Keyboard::Left:
-    case sf::Keyboard::A:
-      game.setDirection(Direction::Left);
-      break;
-    case sf::Keyboard::Right:
-    case sf::Keyboard::D:
-      game.setDirection(Direction::Right);
-      break;
-    default:
-      break;
-    }
-  } else if (event.type == sf::Event::MouseButtonPressed) {
+  if (event.type == sf::Event::MouseButtonPressed) {
     if (statsPanel.getAStarSprite().getGlobalBounds().contains(
             event.mouseButton.x, event.mouseButton.y)) {
       buttonPressed = true;
